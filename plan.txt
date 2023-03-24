@@ -1,0 +1,84 @@
+x.msa : codigo fuente
+x.mbc : archivo "binario" (ensamblado, no linkeditado)
+x.s19 : archivo ejecutable (ensamblado, linkeditado)
+x.lst : listado
+
+
+malbec x
+ found x.msa?
+ yes: x.msa -> x.mbc x.lst
+      x.mbc -> x.s19
+ no:
+  found x.mbc?
+  yes: x.mbc -> x.s19
+  no: " FILE NOT FOUND "
+
+malbec x.msa
+ found x.msa?
+ yes: x.msa -> x.mbc x.lst
+      x.mbc -> x.s19
+ no: " FILE NOT FOUND "
+
+
+1) BUSQUEDA
+   Barro todos los archivos
+   - si especificaron extensión:
+     - si el archivo no existe: WARNING: "FILE NOT FOUND"
+     - si el archivo no tiene extensión compatible: WARNING: "FILE NOT COMPATIBLE"
+     - caso contrario, todo ok, continuo
+   - si no especificaron extensión:
+     - si existe .msa, uso ese
+     - sino, si existe .mbc, uso ese
+     - sino, WARNING: "FILE NOT FOUND"
+2) ASSEMBLY
+   Barro todos los archivos
+   - si es extensión .mbc, .s19 o .lst, lo ignoro
+   - si es extensión .msa, lo ensamblo, generando archivos de mismo nombre, extensión .lst y .mbc
+   - si tienen otra extension (o no existen): FATAL ERROR
+3) LINKER
+   Creo proceso de linkedicion
+   Barro todos los archivos
+   - si tienen extensión .msa: FATAL ERROR
+   - si tienen extensión .s19 o .lst, los ignoro
+   - si tienen extensión .mbc, lo agrego al proceso
+   Con todos los .mbc recolectados, trato de crear el .s19
+
+
+1) BUSQUEDA
+   1.1) malbec [-a/-l] input [input2 ... inputn] [-o output [output2 ... outputm]]
+                3 casos *       2 casos *       5 casos
+                 ...            input           ...
+                 -a             input1 input2   -o output
+                 -l                             -o output1 output2 (m<n, m=n, m>n)
+                
+
+3 casos [   / -a / -l ]
+
+
+NUEVA REGLA:
+input solo puede ser:
+-sin extension (se presume .msa, en su ausencia, .mbc. En su ausencia, archivo no encontrado)
+-.msa
+-.mbc
+
+
+
+NOTA: ... equivale a nada
+
+
+    
+
+    1.1.1)  malbec  ... input               solo con ... se puede especificar como inputs .msa y .mbc
+            malbec  ... input.msa           sí o sí 1 solo output name (.s19)
+            malbec  ... input.mbc
+
+    1.1.2)  malbec  -a  input               sí o sí de tipo .msa
+            malbec  -a  input.msa           pueden haber varios output names (.mbc) (misma cantidad o menos que los intputs). 
+            malbec  -a  input.mbc           Los inputs "sobrantes" conservan su nombre
+      
+    1.1.3)  malbec  -l  input               sí o sí de tipo .mbc
+            malbec  -l  input.msa           sí o sí 1 solo output name (.s19)
+            malbec  -l  input.mbc
+
+    1.1.0)  malbec  -x  input               ok, aca también se pueden especificar como inputs .msa y .mbc
+                                            la diferencia es que no crea archivos intermedios, solo el output (.s19)

@@ -1,0 +1,40 @@
+_NO_FILE     = 0
+_FILE_OPENED = 1
+_NOT_FOUND   = 2
+_ERROR       = 3
+
+class TextFile(object):
+    def __init__(self, filename = None) -> None:
+        self.state = _NO_FILE
+        self.file = None
+        if filename != None:
+            self.open_read_only_file(filename)
+
+    def open_read_only_file(self,filename : str) -> bool:
+        self.close_file()
+        try:
+            self.file = open(filename, "r")
+            self.state = _FILE_OPENED
+        except:
+            self.file = None
+            self.state = _NOT_FOUND
+        return self.state == _FILE_OPENED
+
+    def close_file(self):
+        if self.file != None:
+            self.file.close()
+        self.file = None
+        self.state = _NO_FILE
+
+    def get_all_content(self) -> str:
+        if self.state == _FILE_OPENED and self.file != None:
+            self.file.seek(0)
+            return self.file.read()
+        else:
+            return ""
+    
+    def get_next_line(self) -> str:
+        if self.state == _FILE_OPENED and self.file != None:
+            return self.file.readline()
+        else:
+            return ""
