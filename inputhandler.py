@@ -15,6 +15,7 @@ class InputHandler(object):
         self.input_files = []
     
     def open_files(self, filenames : list[str], option = None) -> list:
+        self.close_files()
         for name in filenames:
             newfile = TextFile()
             if '.' in name:     # File extension specified
@@ -26,12 +27,20 @@ class InputHandler(object):
                     self.state = _INVALID_FILE    # ARCHIVO CON EXTENSIÓN NO VÁLIDA!
             else:               # File extension not specified
                 if   option == ASSEMBLER_ONLY:
-                    self.state = _FILES_OPENED if newfile.open_read_only_file(name+'.msa') else _NOT_FOUND
+                    name += '.msa'
+                    self.state = _FILES_OPENED if newfile.open_read_only_file(name) else _NOT_FOUND
                 elif option == LINKER_ONLY:
-                    self.state = _FILES_OPENED if newfile.open_read_only_file(name+'.mbc') else _NOT_FOUND
+                    name += '.mbc'
+                    self.state = _FILES_OPENED if newfile.open_read_only_file(name) else _NOT_FOUND
                 else:
                     self.state = _FILES_OPENED if newfile.open_read_only_file(name+'.msa') or newfile.open_read_only_file(name+'.mbc') else _NOT_FOUND
-            if self.state != _FILES_OPENED:
+            if self.state == _FILES_OPENED:
+                self.input_files.append(newfile)
+            else:
+                if self.state == _NOT_FOUND:
+                    print(f'File {name} not found!')
+                elif self.state == _INVALID_FILE:
+                    print(f'File {name} not valid!')
                 break
 
         if self.state != _FILES_OPENED:
