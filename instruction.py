@@ -1,16 +1,4 @@
-INH  = 1
-IMM  = 2
-DIR  = 3
-EXT  = 4
-INDX = 5
-INDY = 6
-REL  = 7
-DIR_MSK = 8
-INDX_MSK = 9
-INDY_MSK = 10
-DIR_MSK_REL = 11
-INDX_MSK_REL = 12
-INDY_MSK_REL = 13
+from addressingmodes import *
 
 class Instruction(object):
     def __init__(self, mnemonic:str, opcodes: dict[int,str]) -> None:

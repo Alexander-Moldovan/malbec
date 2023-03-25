@@ -9,10 +9,10 @@ class ProcessedLine(object):
     def has_content(self):
         return (self.label != None or self.instruction != None or self.operand != None)
 
-    def set_label(self,label):
+    def set_label(self,label:str):
         self.label = label
-    def set_instruction(self,instruction):
+    def set_instruction(self,instruction:str):
         self.instruction = instruction
-    def set_operand(self,operand):
+    def set_operand(self,operand:str):
         self.operand = operand
 
