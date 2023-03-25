@@ -46,7 +46,7 @@ INSTRUCTION_SET = {
     'ASRA': Instruction('ASRA',{INH:'47'}),
     'ASRB': Instruction('ARSB',{INH:'57'}),
     'BCC' : Instruction('BCC', {REL:'24'}),
-    'BCLR': Instruction('BCLR',{}), # TODO
+    'BCLR': Instruction('BCLR',{DIR_MSK:'15',INDX_MSK:'1D',INDY_MSK:'181D'}),
     'BCS' : Instruction('BCS', {REL:'25'}),
     'BEQ' : Instruction('BEQ', {REL:'27'}),
     'BGE' : Instruction('BGE', {REL:'2C'}),
@@ -63,10 +63,10 @@ INSTRUCTION_SET = {
     'BNE' : Instruction('BNE', {REL:'26'}),
     'BPL' : Instruction('BPL', {REL:'2A'}),
     'BRA' : Instruction('BRA', {REL:'20'}),
-    'BRCLR':Instruction('BRCLR',{}), # TODO
+    'BRCLR':Instruction('BRCLR',{DIR_MSK_REL:'13',INDX_MSK_REL:'1F',INDY_MSK_REL:'181F'}),
     'BRN' : Instruction('BRN', {REL:'21'}),
-    'BRSET':Instruction('BRSET',{}), # TODO
-    'BSET': Instruction('BSET',{}), # TODO
+    'BRSET':Instruction('BRSET',{DIR_MSK_REL:'12',INDX_MSK_REL:'1E',INDY_MSK_REL:'181E'}),
+    'BSET': Instruction('BSET',{DIR_MSK:'14',INDX_MSK:'1C',INDY_MSK:'181C'}),
     'BSR' : Instruction('BSR', {REL:'8D'}),
     'BVC' : Instruction('BVC', {REL:'28'}),
 
