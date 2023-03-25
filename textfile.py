@@ -37,6 +37,13 @@ class TextFile(object):
         else:
             return ""
     
+    def get_all_lines(self) -> list[str]:
+        if self.state == _FILE_OPENED and self.file != None:
+            self.file.seek(0)
+            return self.file.readlines()
+        else:
+            return []       
+    
     def get_next_line(self) -> str:
         if self.state == _FILE_OPENED and self.file != None:
             return self.file.readline()

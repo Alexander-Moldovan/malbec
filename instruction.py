@@ -25,6 +25,9 @@ class Instruction(object):
     
     def expects_no_operands(self) -> bool:
         return INH in self.opcodes
+    
+    def expects_operands(self) -> bool:
+        return not (INH in self.opcodes)
 
 INSTRUCTION_SET = {
     'ABA' : Instruction('ABA', {INH:'1B'}),
