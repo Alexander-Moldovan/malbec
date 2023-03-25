@@ -10,7 +10,7 @@ class Directive(object):
         return self.requires_operand
 
 DIRECTIVE_SET = {
-    'p68h11': Directive('p68h11', False),
+    'P68H11': Directive('p68h11', False),
     'END' : Directive('END', False),
     'EQU' : Directive('EQU', True),
     'ORG' : Directive('ORG', True),

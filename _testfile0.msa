@@ -1,0 +1,1080 @@
+	p68h11
+
+* NOTA: LE QUITE TODOS LOS SETS Y MACROS A ESTE ARCHIVO. NO COMPILARA, PERO AL MENOS PODRÁ PASAR POR EL PRECOMPILADOR
+
+HEIGHT	EQU	128
+WIDTH	EQU	128
+STKSIZE	EQU	256
+DSPSIZE	EQU	HEIGHT*WIDTH
+
+DISPLAY	EQU	$2000	- $5FFF
+DISPEND	EQU	DISPLAY+DSPSIZE = $6000
+CODE	EQU	$C000	- $DFFF ??? (incluye stack)	D11???
+*			- $FFBF
+*
+*	256 puntos de 3 componentes (4 por simplicidad)		X,Y,Z
+*	= 1024 bytes ($400)
+*	512 aristas de 3 componentes (4 por simplicidad)	from,to,color
+*	= 2048 bytes ($800)
+EDGES	EQU	$E000	- $E7FF
+VERTEX	EQU	$E800	- $EBFF
+VERT_T	EQU	$EC00	- $EFFF
+META	EQU	$F000	- ??? (max $FFBF)
+
+DISP_H	EQU	$100
+DISP_W	EQU	$101
+DISP_M	EQU	$102
+DISP_D	EQU	$103	- $104
+PORTA	EQU	$1000
+
+
+EDGNUM	EQU	512
+EDGSIZE	EQU	4
+EDG_FRM	EQU	0
+EDG_TO	EQU	1
+EDG_COL	EQU	2
+
+VTXNUM	EQU	256
+VTXSIZE	EQU	4
+VTX_X	EQU	0
+VTX_Y	EQU	1
+VTX_Z	EQU	2
+
+
+
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+
+********
+* main *
+********
+
+	ORG	CODE
+main	EQU	*
+	lds	#stk_in
+	jsr	init_config
+	
+start	EQU	*
+
+	ldaa	#$0
+	psha
+	jsr	clear_screen
+	pula
+	
+	jsr	transform_vertexes
+	
+	ldx	#EDGES
+edgloop	EQU	*
+	ldaa	EDG_COL,x
+	psha
+
+	ldaa	EDG_TO,x
+	ldab	#EDGSIZE
+	mul
+	addd	#VERT_T
+	xgdy
+	ldaa	VTX_Y,y
+	psha
+	ldaa	VTX_X,y
+	psha
+	
+	ldaa	EDG_FRM,x
+	ldab	#EDGSIZE
+	mul
+	addd	#VERT_T
+	xgdy
+	ldaa	VTX_Y,y
+	psha
+	ldaa	VTX_X,y
+	psha
+
+	jsr	line_drawer
+
+	pula
+	pula
+	pula
+	pula
+	pula
+	
+	xgdx
+	addd	#EDGSIZE
+	xgdx
+	cpx	edges_end
+	bne	edgloop
+	
+	bra	start
+fin	bra	fin
+
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+*****************************************************************
+*	**********************					*
+*	* transform_vertexes *					*
+*	**********************					*
+*								*
+*	Recibe: Nada						*
+*								*
+*	Estructura stack					*
+*								*
+* FP ->	|     AccA	|					*
+*	|     AccB	|					*
+*	|     IX (H)	|					*
+*	|     IX (L)	|					*
+*	|     IY (H)	|					*
+*	|     IY (L)	|					*
+*	|     PC (H)	|					*
+*	|     PC (L)	|					*
+*								*
+*	Entrega: Nada						*
+*								*
+*	Funcion:						*
+*	Transforma todos los vertices de la lista VERTEX a	*
+*	VERT_T, aplicando rotaciones, zoom y translaciones	*
+*								*
+*****************************************************************
+
+transform_vertexes	EQU	*
+	
+* Copia de los datos sin modificar
+	ldx	#VERTEX
+	ldy	#VERT_T
+	
+copyver	EQU	*
+	ldaa	VTX_X,x
+	staa	VTX_X,y
+	ldaa	VTX_Y,x
+	staa	VTX_Y,y
+	ldaa	VTX_Z,x
+	staa	VTX_Z,y
+
+	ldab	#VTXSIZE
+	abx
+	aby
+	cpx	vertex_end
+	bne	copyver
+
+* Transformar los vertices en VERT_T
+	tsy
+	ldx	#VERT_T
+	
+transf_single_vtx	EQU	*
+	ldaa	rot_z
+	psha
+	ldaa	VTX_Y,x
+	psha
+	ldaa	VTX_X,x
+	psha
+	jsr	rotate
+	pula
+	staa	VTX_X,x
+	pula
+	staa	VTX_Y,x
+	pula
+	
+	ldaa	rot_x
+	psha
+	ldaa	VTX_Z,x
+	psha
+	ldaa	VTX_Y,x
+	psha
+	jsr	rotate
+	pula
+	staa	VTX_Y,x
+	pula
+	staa	VTX_Z,x
+	pula
+	
+	ldaa	rot_y
+	psha
+	ldaa	VTX_X,x
+	psha
+	ldaa	VTX_Z,x
+	psha
+	jsr	rotate
+	pula
+	staa	VTX_Z,x
+	pula
+	staa	VTX_X,x
+	pula
+	
+	ldab	#VTXSIZE
+	abx
+	cpx	vert_t_end
+	bne	transf_single_vtx
+	
+
+	rts
+
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+***************************************************************** 2DO: *corregir indices de frame pointer, manejo de stack, etc
+*	*************** 					*      *corregir dibujito
+*	* line_drawer * 					*      *analizar caso ambos = 0
+*	*************** 					*
+*								*
+*	Recibe: Coordenadas X e Y del punto inicial y final	*
+*		Color de la linea				*
+*								*
+*	Estructura stack					*
+*								*
+* FP ->	|  X objetivo   | Interfaz con point drawer		*
+*   1,x	|  Y objetivo   |					*
+*   2,x	|Color objetivo |					*
+*	|---------------|					*
+*   3,x	|   Contador	|					*
+*	|---------------|					*
+*   4,x	|     Signo	| Coordenada mayor			*
+*   5,x	|     Delta	|					*
+*   6,x	| Valor inicial	|					*
+*   7,x	| PointerOffset	|					*
+*	|---------------|					*
+*   8.x	|     Signo	| Coordenada menor			*
+*   9,x	|     Delta	|					*
+*  10,x	| Valor inicial	|					*
+*  11,x	| PointerOffset	|					*
+*	|---------------|					*
+* 	|     AccA	|					*
+*	|     AccB	|					*
+*	|     IX (H)	|					*
+*	|     IX (L)	|					*
+*	|     IY (H)	|					*
+*	|     IY (L)	|					*
+*	|     PC (H)	|					*
+*	|     PC (L)	|					*
+*  20,x	| coordenada X1	|					*
+*  21,x	| coordenada Y1	|					*
+*  22,x	| coordenada X2	|					*
+*  23,x	| coordenada Y2	|					*
+*  24,x	|     color	|					*
+*								*
+*	Entrega: Nada						*
+*								*
+*	Funcion:     						*
+*	Grafica una recta en el bitmap display		 	*
+*								*
+*****************************************************************
+
+
+
+line_drawer	EQU	*
+
+	tsx
+	xgdx
+	subd	#TEMPSTK
+	xgdx
+	txs
+	
+	tsy
+	ldaa	COLOR,y
+	staa	C_POINT,y
+	
+	ldaa	X1,y
+	psha
+	ldaa	X2,y
+	psha
+	jsr	difference
+	pula
+	pula
+	
+	ldab	Y1,y
+	pshb
+	ldab	Y2,y
+	pshb
+	jsr	difference
+	pulb
+	pulb
+	
+	tsta
+	bne	det_main_coor
+	tstb
+	bne	det_main_coor
+	ldaa	X1,y
+	staa	X_POINT,y
+	ldaa	Y1,y
+	staa	Y_POINT,y
+	jsr	point_drawer
+	jmp	end_of_line_drawer
+	
+****************************************
+
+det_main_coor	EQU	*	AccA = DeltaX, AccB = DeltaY
+	cba
+	blo	deltaY_main
+
+****************************************
+
+deltaX_main	EQU	*
+	ldaa	X1,y
+	staa	MA_INIT,y
+	psha
+	ldaa	X2,y
+	psha
+	jsr	difference
+	pula
+	staa	MA_SIGN,y
+	pula
+	staa	MA_DELT,y
+	clr	MA_OFFS,y
+	
+	ldaa	Y1,y
+	staa	MI_INIT,y
+	psha
+	ldaa	Y2,y
+	psha
+	jsr	difference
+	pula
+	staa	MI_SIGN,y
+	pula
+	staa	MI_DELT,y
+	ldaa	#1
+	staa	MI_OFFS,y
+	
+	bra	start_line
+	
+****************************************
+
+deltaY_main	EQU	*
+	ldaa	Y1,y
+	staa	MA_INIT,y
+	psha
+	ldaa	Y2,y
+	psha
+	jsr	difference
+	pula
+	staa	MA_SIGN,y
+	pula
+	staa	MA_DELT,y
+	ldaa	#1
+	staa	MA_OFFS,y
+	
+	ldaa	X1,y
+	staa	MI_INIT,y
+	psha
+	ldaa	X2,y
+	psha
+	jsr	difference
+	pula
+	staa	MI_SIGN,y
+	pula
+	staa	MI_DELT,y
+	clr	MI_OFFS,y
+
+****************************************
+
+start_line	EQU	*
+	ldaa	MA_DELT,y
+	staa	COUNTER,y
+	
+	
+line_loop	EQU	*
+	ldaa	COUNTER,y
+	tst	MA_SIGN,y
+	beq	ma_off_ready
+	nega
+ma_off_ready	EQU	*
+	adda	MA_INIT,y
+	
+	tsx
+	ldab	MA_OFFS,y
+	abx
+	staa	0,x
+	
+	
+	ldaa	COUNTER,y
+	ldab	MI_DELT,y
+	mul
+	xgdx
+	ldab	MA_DELT,y
+	clra
+	xgdx
+	
+	idiv		* AccD = resto, IX = division
+	pshx
+	xgdx
+	ldab	MA_DELT,y
+	clra
+	xgdx
+	fdiv
+	xgdx
+	tsta
+	bpl	dont_round_up_line
+round_up_line	EQU	*
+	pulx
+	xgdx
+	incb
+	bra	mi_off_rounded
+	
+dont_round_up_line	EQU	*
+	pulx
+	xgdx
+
+* aqui el resultado tiene que estar en AccB
+mi_off_rounded	EQU	*
+	tst	MI_SIGN,y
+	beq	mi_off_ready
+	negb
+mi_off_ready	EQU	*
+	addb	MI_INIT,y
+	tba
+	
+	tsx
+	ldab	MI_OFFS,y
+	abx
+	staa	0,x
+	
+	jsr	point_drawer
+	
+	tst	COUNTER,y
+	beq	end_of_line_drawer
+	dec	COUNTER,y
+	bra	line_loop
+
+****************************************
+	
+end_of_line_drawer	EQU	*
+	tsx
+	xgdx
+	addd	#TEMPSTK
+	xgdx
+	txs
+
+	rts
+	
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+*****************************************************************
+*	**********						*
+*	* rotate *						* 
+*	**********						*
+*								*
+*	Recibe: Coordenada x (8 bit signado)			*
+*		Coordenada y (8 bit signado)			*
+*		Angulo de rotacion				*
+*								*
+*	Estructura stack					*
+*								*
+* FP ->	|     	       AccA		|			*
+*	|     	       AccB		|			*
+*	|     	      IX (H)		|			*
+*	|     	      IX (L)		|			*
+*	|             IY (H)		|			*
+*	|             IY (L)		|			* 
+*	|             PC (H)		|			*
+*	|     	      PC (L)		|			*
+*   8,x	|    	X	|  X resultado	|			*
+*   9,x	|   	Y	|  Y resultado	|			*
+*  10,x	|    angulo	| /////////////	|			*
+*	   -- antes --	  -- despues --				*
+*								*
+*	Entrega: Coordenada x nueva (8 bit signado)		*
+*		 Coordenada y nueva (8 bit signado)		*
+*								*
+*	Funcion:     						*
+*	Rota un vector en el plano				*
+*								*
+*								*
+*								*
+*								*
+*								*
+*****************************************************************
+
+
+rotate	EQU	*
+
+	tsy
+	
+	ldab	Y_IN,y
+	pshb
+	ldab	ANG_IN,y
+	pshb
+	jsr	cos
+	pulb
+	pulb		* AccB = y cos(a)
+
+	ldaa	X_IN,y
+	psha
+	ldaa	ANG_IN,y
+	psha
+	jsr	sin
+	pula
+	pula		* AccA = x sin(a)
+	
+	aba		* AccA = x sin(a) + y cos(a)
+	
+	ldab	Y_IN,y
+	pshb
+	ldab	ANG_IN,y
+	pshb
+	jsr	sin
+	pulb
+	pulb
+	negb		* AccB = - y sin(a)
+	
+	staa	Y_OUT,y
+	ldaa	X_IN,y
+	psha
+	ldaa	ANG_IN,y
+	psha
+	jsr	cos
+	pula
+	pula		* AccA = x cos(a)
+	
+	aba		* AccA = x cos(a) - y sin(a)
+	staa	X_OUT,y
+
+	rts
+
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+*****************************************************************
+*	****************					*
+*	* clear_screen *					*
+*	****************					*
+*								*
+*	Recibe: Color para pintar el bitmap display		*
+*								*
+*	Estructura stack					*
+*								*
+* FP ->	|     AccA	|					*
+*	|     AccB	|					*
+*	|     IX (H)	|					*
+*	|     IX (L)	|					*
+*	|     IY (H)	|					*
+*	|     IY (L)	|					*
+*	|     PC (H)	|					*
+*	|     PC (L)	|					*
+*   8,x	|     color	|					*
+*								*
+*	Entrega: Nada						*
+*								*
+*	Funcion:     						*
+*	Rellena el display con el color indicado		*
+*								*
+*****************************************************************
+
+
+clear_screen	EQU	*
+
+	tsy
+	
+	ldaa	COLOR,y
+	ldx	#DISPLAY
+	
+clrscrnloop	EQU	*
+	staa	0,x
+	inx
+	cpx	#DISPEND
+	bne	clrscrnloop
+	
+
+	rts
+
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+*****************************************************************
+*	****************					*
+*	* point_drawer *					*
+*	****************					*
+*								*
+*	Recibe: Coordenadas X e Y del punto			*
+*		Color del punto					*
+*								*
+*	Estructura stack					*
+*								*
+* FP ->	| Temp Var (H)  |					*
+* 	| Temp Var (L)	|					*
+* 	|     AccA	|					*
+*	|     AccB	|					*
+*	|     IX (H)	|					*
+*	|     IX (L)	|					*
+*	|     IY (H)	|					*
+*	|     IY (L)	|					*
+*	|     PC (H)	|					*
+*	|     PC (L)	|					*
+*  10,x	| coordenada X	|					*
+*  11,x	| coordenada Y	|					*
+*  12,x	|     color	|					*
+*								*
+*	Entrega: Nada						*
+*								*
+*	Funcion:     						*
+*	Grafica un punto en el bitmap display		 	*
+*								*
+*	CONSTANTES:						*
+*								*
+*								*
+*****************************************************************
+
+
+point_drawer	EQU	*
+
+	pshx
+	tsy
+
+	ldab	YCOOR,y
+	cmpb	#MIN_Y
+	blt	end_of_point_drawer
+	cmpb	#MAX_Y
+	bgt	end_of_point_drawer
+	ldab	XCOOR,y
+	cmpb	#MIN_X
+	blt	end_of_point_drawer
+	cmpb	#MAX_X
+	bgt	end_of_point_drawer
+
+	ldx	#DISPLAY
+	addb	#(-MIN_X)
+	abx
+	ldab	YCOOR,y
+	addb	#(-MIN_Y)
+	ldaa	#WIDTH
+	mul
+	std	TMPVAR,y
+	xgdx
+	addd	TMPVAR,y
+	xgdx
+	
+	ldab	COLOR,y
+	stab	0,x	
+
+end_of_point_drawer	EQU	*
+	pulx
+
+	rts
+
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+*****************************************************************
+*	**************						*
+*	* difference *						*
+*	**************						*
+*								*
+*	Recibe: Dos numeros (int 8 bit signados)		*
+*								*
+*	Estructura stack					*
+*								*
+* FP ->	|     	       AccA		|			*
+*	|     	       AccB		|			*
+*	|     	      IX (H)		|			*
+*	|     	      IX (L)		|			*
+*	|             IY (H)		|			*
+*	|             IY (L)		|			* 
+*	|             PC (H)		|			*
+*	|     	      PC (L)		|			*
+*   8,x	|    Minuendo	|     Signo	|			*
+*   9,x	|   Sustraendo	|   Resultado	|			*
+*	   -- antes --	  -- despues --				*
+*								*
+*	Entrega: Valor absoluto de la diferencia (uint 8bit)	*
+*		 Signo de la diferencia (0=+, 1=-)		*
+*								*
+*	Funcion:						*
+*	Calcula la diferencia entre dos numeros signados	*
+*								*
+*****************************************************************
+
+
+difference	EQU	*
+
+	tsy
+	
+	ldaa	MIN,y
+	ldab	SUS,y
+	clr	SIGN,y
+	
+	cba
+	blt	dif_is_neg
+
+dif_is_plus	EQU	*	
+	sba
+	staa	ANSWER,y
+	bra	dif_done
+	
+	
+dif_is_neg	EQU	*
+	inc	SIGN,y
+	sba
+	nega
+	staa	ANSWER,y
+	
+dif_done	EQU	*	
+
+	rts
+
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+***************************************************************** NOTA
+*	*******							*
+*	* cos *							* cos(a) = sin(a+pi/2)
+*	*******							*
+*								*
+*	Recibe: Angulo : 0 = 0, 255 = 360(1-1/256)		*
+*		Coeficiente (8 bit signado)			* 
+*								*
+*	Estructura stack					*
+*								*
+* FP ->	|     	       AccA		|			*
+*	|     	       AccB		|			*
+*	|     	      IX (H)		|			*
+*	|     	      IX (L)		|			*
+*	|             IY (H)		|			*
+*	|             IY (L)		|			* 
+*	|             PC (H)		|			*
+*	|     	      PC (L)		|			*
+*   8,x	|    angulo	| ///////////// |			*
+*   9,x	|  coeficiente	|   resultado	|			*
+*	   -- antes --	  -- despues --				*
+*								*
+*	Entrega: Coeficiente*cos(Angulo) (8 bit signado)	*
+*								*
+*	Funcion:						*
+*	Multiplica un coeficiente por el coseno de un angulo	*
+*								*
+*****************************************************************
+
+
+cos	EQU	*
+
+	tsy
+	
+	ldaa	COEFF,y
+	psha
+	ldaa	ANGLE,y
+	adda	#64
+	psha
+	jsr	sin
+	pula
+	pula
+	staa	ANSWER,y
+
+
+	rts
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+***************************************************************** NOTA
+*	*******							*
+*	* sin *							* sin(a) = -sin(a)
+*	*******							* si a >= 128 reemplazar
+*								* a por -a y modificar
+*	Recibe: Angulo : 0 = 0, 255 = 360(1-1/256)		* SIGNO
+*		Coeficiente (8 bit signado)			* 
+*								* sin(a) = sin(pi-a)
+*	Estructura stack					* si a >= 64 reemplazar
+*								* a por 128-a
+* FP ->	|    	    Aux: Signo		|			*
+* 	|     	       AccA		|			* si a >= 62
+*	|     	       AccB		|			* sin(a) aprox = 1
+*	|     	      IX (H)		|			*
+*	|     	      IX (L)		|			* sino, sin(a) de tabla
+*	|             IY (H)		|			*
+*	|             IY (L)		|			* 
+*	|             PC (H)		|			*
+*	|     	      PC (L)		|			*
+*   9,x	|    angulo	| ///////////// |			*
+*  10,x	|  coeficiente	|   resultado	|			*
+*	   -- antes --	  -- despues --				*
+*								*
+*	Entrega: Coeficiente*sin(Angulo) (8 bit signado)	*
+*								*
+*	Funcion:						*
+*	Multiplica un coeficiente por el seno de un angulo	*
+*								*
+*****************************************************************
+
+
+sin	EQU	*
+
+	psha
+	tsy
+	
+	clr	SIGN,y
+	
+	tst	COEFF,y
+	bpl	coeff_ready
+	neg	COEFF,y
+	inc	SIGN,y
+coeff_ready	EQU	*
+	
+	ldaa	ANGLE,y
+	cmpa	#128
+	blo	ang_lo_128
+	neg	ANGLE,y
+	inc	SIGN,y
+ang_lo_128	EQU	*
+
+	ldab	ANGLE,y
+	cmpb	#64
+	blo	ang_lo_64
+	ldaa	#128
+	sba
+	staa	ANGLE,y
+ang_lo_64	EQU	*
+
+	ldab	ANGLE,y
+	cmpb	#62
+	bhs	sin_is_1
+	ldx	#sin_tab
+	abx
+	ldaa	0,x
+	ldab	COEFF,y
+	mul
+*	tstb
+*	bpl	sin_saving_answer
+*	inca
+*sin_saving_answer	EQU	*
+	staa	ANSWER,y
+	bra	cor_answer_sign
+sin_is_1	EQU	*
+* NOTE: coefficient already on answer
+cor_answer_sign	EQU	*
+
+	brclr	SIGN,y,#1,sin_calculated
+	neg	ANSWER,y
+
+sin_calculated	EQU	*
+	pula
+
+	rts
+	
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+*****************************************************************
+*	***************						*
+*	* init_config *						*
+*	***************						*
+*								*
+*	Recibe: Nada						*
+*								*
+*	Entrega: Nada						*
+*								*
+*	Funcion:						*
+*	Configurar el bitmap display				*
+*								*
+*****************************************************************
+init_config	EQU	*
+	psha
+	pshb
+	ldaa	#HEIGHT
+	staa	DISP_H
+	ldaa	#WIDTH
+	staa	DISP_W
+	ldd	#DISPLAY
+	std	DISP_D
+	pulb
+	pula
+	rts
+
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+sin_tab	FCB	0,6,13,19,25,31,38,44
+	FCB	50,56,62,68,74,80,86,92
+	FCB	98,104,109,115,121,126,132,137
+	FCB	142,147,152,157,162,167,172,177
+	FCB	181,185,190,194,198,202,206,209
+	FCB	213,216,220,223,226,229,231,234
+	FCB	237,239,241,243,245,247,248,250
+	FCB	251,252,253,254,255,255,0,0
+
+	RMB	STKSIZE
+stk_in	EQU	*-1
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+	ORG	EDGES
+	RMB	EDGNUM*EDGSIZE
+	
+	ORG	VERTEX
+	RMB	VTXNUM*VTXSIZE
+	
+	ORG	VERT_T
+	RMB	VTXNUM*VTXSIZE
+	
+
+
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+*///////////////////////////////////////////////////////////////*
+*****************************************************************
+
+
+	ORG	EDGES
+	FCB	0,1,COLOR,0
+	FCB	1,2,COLOR,0
+	FCB	2,3,COLOR,0
+	FCB	3,4,COLOR,0
+	FCB	4,5,COLOR,0
+	FCB	5,6,COLOR,0
+	FCB	6,7,COLOR,0
+	FCB	7,0,COLOR,0
+
+	FCB	0+8,1+8,COLOR,0
+	FCB	1+8,2+8,COLOR,0
+	FCB	2+8,3+8,COLOR,0
+	FCB	3+8,4+8,COLOR,0
+	FCB	4+8,5+8,COLOR,0
+	FCB	5+8,0+8,COLOR,0
+
+	FCB	0+14,1+14,COLOR,0
+	FCB	1+14,2+14,COLOR,0
+	FCB	2+14,3+14,COLOR,0
+	FCB	3+14,4+14,COLOR,0
+	FCB	4+14,5+14,COLOR,0
+	FCB	5+14,0+14,COLOR,0
+
+	FCB	0,0+8,COLOR,0
+	FCB	0,0+14,COLOR,0
+	FCB	1,1+8,COLOR,0
+	FCB	1,1+14,COLOR,0
+	FCB	2,1+8,COLOR,0
+	FCB	2,1+14,COLOR,0
+	FCB	3,2+8,COLOR,0
+	FCB	3,2+14,COLOR,0
+	FCB	4,3+8,COLOR,0
+	FCB	4,3+14,COLOR,0
+	FCB	5,4+8,COLOR,0
+	FCB	5,4+14,COLOR,0
+	FCB	6,5+8,COLOR,0
+	FCB	6,5+14,COLOR,0
+	FCB	7,5+8,COLOR,0
+	FCB	7,5+14,COLOR,0
+
+EDGES_END	EQU	*
+	
+	ORG	VERTEX
+	FCB	0,-32,0,0
+	FCB	32,-48,0,0
+	FCB	64,-24,0,0
+	FCB	64,24,0,0
+	FCB	0,64,0,0
+	FCB	-64,24,0,0
+	FCB	-64,-24,0,0
+	FCB	-32,-48,0,0
+
+	FCB	0,0,32,0
+	FCB	32,-16,32,0
+	FCB	32,16,32,0
+	FCB	0,32,32,0
+	FCB	-32,16,32,0
+	FCB	-32,-16,32,0
+
+	FCB	0,0,-32,0
+	FCB	32,-16,-32,0
+	FCB	32,16,-32,0
+	FCB	0,32,-32,0
+	FCB	-32,16,-32,0
+	FCB	-32,-16,-32,0
+
+
+VERTEX_END	EQU	*
+VERT_T_END	EQU	VERT_T+(VERTEX_END-VERTEX)
+
+	ORG	META
+edges_end	FDB	EDGES_END	*EDGES+(edges_defined*EDGSIZE)
+vertex_end	FDB	VERTEX_END	*VERTEX+(vertex_defined*VTXSIZE)
+vert_t_end	FDB	VERT_T_END	*VERT_T+(vertex_defined*VTXSIZE)
+
+*edges_defined = 12
+*vertex_defined = 8
+	
+rot_x	FCB	0
+rot_y	FCB	0
+rot_z	FCB	0
+	
+
+	END
