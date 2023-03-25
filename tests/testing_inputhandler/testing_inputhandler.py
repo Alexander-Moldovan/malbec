@@ -1,6 +1,8 @@
 from inputhandler import InputHandler
 from textfile import TextFile
 
+# TODO : probar archivos no válidos entre archivos válidos
+
 ih = InputHandler()
 files = []
 

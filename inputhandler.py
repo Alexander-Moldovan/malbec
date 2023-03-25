@@ -14,7 +14,7 @@ class InputHandler(object):
         self.state = _NO_FILES
         self.input_files = []
     
-    def open_files(self, filenames : list[str], option = None) -> list:
+    def open_files(self, filenames : list[str], option = None) -> list[TextFile]:
         self.close_files()
         for name in filenames:
             newfile = TextFile()
