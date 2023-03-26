@@ -118,7 +118,8 @@ class Expression(object): # Made of particles (operators, variables, etc)
                 elif c == '\'':
                     current_particle = c
                     state = _APOSTROPHE_1
-                
+        if current_particle != '': # TODO: corroborar que sea válido
+            self.expression.append(current_particle)
 
 
 
