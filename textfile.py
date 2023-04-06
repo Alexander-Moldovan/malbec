@@ -59,13 +59,8 @@ class TextFile(object):
         return self.name
     
 
-# class InputHandler(object):
-#     def __init__(self) -> None:
-#         self.state = _NO_FILES
-#         self.input_files = []
     
 def open_files(filenames : list[str], option = None) -> list[list[TextFile], bool]:
-    # self.close_files()
     _NO_FILES     = 0
     _FILES_OPENED = 1
     _NOT_FOUND    = 2
@@ -107,15 +102,7 @@ def open_files(filenames : list[str], option = None) -> list[list[TextFile], boo
     
     return input_files, state == _FILES_OPENED
 
+
 def close_files(files : list[TextFile]): # No olvidar hacer files.clear() por afuera!
     for file in files:
         file.close_file()
-    # self.input_files.clear()
-    # self.state = _NO_FILES
-
-    # def get_files(self) -> list:
-    #     return self.input_files
-    
-    # def are_files_open(self) -> bool:
-    #     return self.state == _FILES_OPENED
-    

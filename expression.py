@@ -15,7 +15,7 @@ class Expression(object): # Made of tokens (operators, variables, etc)
         self.set_expression(expression)
 
     def set_expression(self, expression : str):
-        self.expression = []
+        self.tokens = []
 
         state = _NEW_TOKEN
         current_token = ''
@@ -26,35 +26,35 @@ class Expression(object): # Made of tokens (operators, variables, etc)
                     current_token += c
                     processed_character = True
                     if c == '.':
-                        self.expression.append(current_token)
+                        self.tokens.append(current_token)
                         current_token = ''
                         state = _NEW_TOKEN
                 elif state == _LESS_THAN:
                     if c in ['<','=','>']:
                         current_token += c
                         processed_character = True
-                        self.expression.append(current_token)
+                        self.tokens.append(current_token)
                         current_token = ''
                         state = _NEW_TOKEN
                     else:
-                        self.expression.append(current_token)
+                        self.tokens.append(current_token)
                         current_token = ''
                 elif state == _MORE_THAN:
                     if c in ['=','>']:
                         current_token += c
                         processed_character = True
-                        self.expression.append(current_token)
+                        self.tokens.append(current_token)
                         current_token = ''
                         state = _NEW_TOKEN
                     else:
-                        self.expression.append(current_token)
+                        self.tokens.append(current_token)
                         current_token = ''
                 elif state == _ALPHANUMERIC:
                     if c.isalpha() or c.isnumeric() or c in ['?','@','_','$']:
                         current_token += c
                         processed_character = True
                     else:
-                        self.expression.append(current_token)
+                        self.tokens.append(current_token)
                         current_token = ''
                         state = _NEW_TOKEN
                 elif state == _REG_NUMBER:
@@ -64,18 +64,18 @@ class Expression(object): # Made of tokens (operators, variables, etc)
                     elif c.upper() in ['H','B','Q']:
                         current_token += c.upper()
                         processed_character = True
-                        self.expression.append(current_token)
+                        self.tokens.append(current_token)
                         current_token = ''
                         state = _NEW_TOKEN
                     else:
-                        self.expression.append(current_token)
+                        self.tokens.append(current_token)
                         current_token = ''
                 elif state == _HEX_NUMBER:
                     if c.isnumeric():
                         current_token += c
                         processed_character = True
                     else:
-                        self.expression.append(current_token)
+                        self.tokens.append(current_token)
                         current_token = ''
                 elif state == _APOSTROPHE_1:
                     current_token += c
@@ -88,7 +88,7 @@ class Expression(object): # Made of tokens (operators, variables, etc)
                         processed_character = True
                         state = _APOSTROPHE_1
                     else:
-                        self.expression.append(current_token)
+                        self.tokens.append(current_token)
                         current_token = ''
 
             if not processed_character: # Therefore, new token (operator or variable)
@@ -97,7 +97,7 @@ class Expression(object): # Made of tokens (operators, variables, etc)
                     current_token = ""
 
                 if c in ['&','+','-','*','/','=','(',')','#']:
-                    self.expression.append(c)
+                    self.tokens.append(c)
                     state = _NEW_TOKEN
                 elif c == '.':
                     current_token = c
@@ -121,28 +121,28 @@ class Expression(object): # Made of tokens (operators, variables, etc)
                     current_token = c
                     state = _APOSTROPHE_1
         if current_token != '': # TODO: corroborar que sea válido
-            self.expression.append(current_token)
+            self.tokens.append(current_token)
 
     def get_tokens(self) -> list[str]: #TODO: determinar si es necesario este metodo
-        return self.expression
+        return self.tokens
 
     def is_index(self) -> bool:
-        return len(self.expression) == 1 and self._is_token_index(self.expression[0])
+        return len(self.tokens) == 1 and self._is_token_index(self.tokens[0])
     
     def is_index_x(self) -> bool:
-        return len(self.expression) == 1 and self._is_token_x(self.expression[0])
+        return len(self.tokens) == 1 and self._is_token_x(self.tokens[0])
     
     def is_index_y(self) -> bool:
-        return len(self.expression) == 1 and self._is_token_y(self.expression[0])
+        return len(self.tokens) == 1 and self._is_token_y(self.tokens[0])
     
     def is_imm_expression(self) -> bool:
-        return len(self.expression) > 0 and self._is_token_numsign(self.expression[0])
+        return len(self.tokens) > 0 and self._is_token_numsign(self.tokens[0])
 
     def is_regular_expression(self) -> bool:
         return not self.is_index() and not self.is_imm_expression() and not self.is_empty()
 
     def is_empty(self) -> bool:
-        return len(self.expression) == 0    
+        return len(self.tokens) == 0    
 
     def _is_token_index(self,token:str) -> bool:
         return self._is_token_x(token) or self._is_token_y(token)

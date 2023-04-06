@@ -3,51 +3,51 @@ from numpy import int32
 
 class CompilerOperator(object):
     def __init__(self, symbol:str,order:int,fn: Callable,unary = False) -> None:
-        self._symbol = symbol
-        self._order = order
-        self._fn = fn
-        self._is_unary = unary
+        self.symbol = symbol
+        self.order = order
+        self.fn = fn
+        self.is_unary = unary
 
     def __repr__(self) -> str:
-        return self._symbol
+        return self.symbol
 
     def __str__(self) -> str:
-        return self._symbol
+        return self.symbol
 
-    def fn(self) -> Callable:
-        return self._fn
+    # def fn(self) -> Callable:
+    #     return self._fn
 
-    def is_unary(self) -> bool:
-        return self._is_unary
+    # def is_unary(self) -> bool:
+    #     return self._is_unary
 
-    def order(self) -> int:
-        return self._order
+    # def order(self) -> int:
+    #     return self._order
     
-    def symbol(self) -> str:
-        return self._symbol
+    # def symbol(self) -> str:
+    #     return self._symbol
     
-def is_binary_operator(particle:str):
-    return particle in _BINARY_OPERATOR_LIST
-def is_unary_operator(particle:str):
-    return particle in _UNARY_OPERATOR_LIST
-def is_variable(particle:str): # TODO: corroborar mas finamente
-    if len(particle) == 0:
+def is_binary_operator(token:str):
+    return token in _BINARY_OPERATOR_LIST
+def is_unary_operator(token:str):
+    return token in _UNARY_OPERATOR_LIST
+def is_variable(token:str): # TODO: corroborar mas finamente
+    if len(token) == 0:
         return False
-    is_string = particle[0] == '\'' and particle[-1] == '\''
-    is_number = particle[0].isnumeric() or particle[0] == '$'
-    is_alpha = particle[0].isalpha() or particle[0] in ['?','@','_']
-    is_plc = particle == '*'
+    is_string = token[0] == '\'' and token[-1] == '\''
+    is_number = token[0].isnumeric() or token[0] == '$'
+    is_alpha = token[0].isalpha() or token[0] in ['?','@','_']
+    is_plc = token == '*'
     return is_string or is_number or is_alpha or is_plc
 
-def get_binary_operator(particle:str):
-    if is_binary_operator(particle):
-        return _BINARY_OPERATOR_LIST[particle]
+def get_binary_operator(token:str):
+    if is_binary_operator(token):
+        return _BINARY_OPERATOR_LIST[token]
     else:
         return None
 
-def get_unary_operator(particle:str):
-    if is_unary_operator(particle):
-        return _UNARY_OPERATOR_LIST[particle]
+def get_unary_operator(token:str):
+    if is_unary_operator(token):
+        return _UNARY_OPERATOR_LIST[token]
     else:
         return None
 
