@@ -58,7 +58,7 @@ def _fn_unary_minus(a : int32) -> list[int32,bool]:
     c = int32(-a)
     return c,c.is_integer()
 def _fn_logical_not(a : int32) -> list[int32,bool]:
-    c = int32(a ^ int32(0xffffffff))
+    c = int32(a ^ int32(-1))
     return c,c.is_integer()
 def _fn_low_byte(a : int32) -> list[int32,bool]:
     c = int32(a & int32(0xff))
@@ -108,28 +108,28 @@ def _fn_logical_xor(a : int32, b : int32) -> list[int32,bool]:
     return c,c.is_integer
 
 def _fn_equal(a : int32, b : int32) -> list[int32,bool]:
-    c = int32(0xffffffff) if (a == b) else int32(0)
+    c = int32(-1) if (a == b) else int32(0)
     return c,c.is_integer
 def _fn_not_equal(a : int32, b : int32) -> list[int32,bool]:
-    c = int32(0xffffffff) if (a != b) else int32(0)
+    c = int32(-1) if (a != b) else int32(0)
     return c,c.is_integer
 def _fn_greater_or_equal(a : int32, b : int32) -> list[int32,bool]:
-    c = int32(0xffffffff) if (a >= b) else int32(0)
+    c = int32(-1) if (a >= b) else int32(0)
     return c,c.is_integer
 def _fn_less_or_equal(a : int32, b : int32) -> list[int32,bool]:
-    c = int32(0xffffffff) if (a <= b) else int32(0)
+    c = int32(-1) if (a <= b) else int32(0)
     return c,c.is_integer
 def _fn_greater(a : int32, b : int32) -> list[int32,bool]:
-    c = int32(0xffffffff) if (a > b) else int32(0)
+    c = int32(-1) if (a > b) else int32(0)
     return c,c.is_integer
 def _fn_less(a : int32, b : int32) -> list[int32,bool]:
-    c = int32(0xffffffff) if (a < b) else int32(0)
+    c = int32(-1) if (a < b) else int32(0)
     return c,c.is_integer
 def _fn_unsigned_greater(a : int32, b : int32) -> list[int32,bool]:
-    c = int32(0xffffffff) if (a+int32(-2**31) > b+int32(-2**31)) else int32(0)
+    c = int32(-1) if (a+int32(-2**31) > b+int32(-2**31)) else int32(0)
     return c,c.is_integer
 def _fn_unsigned_less(a : int32, b : int32) -> list[int32,bool]:
-    c = int32(0xffffffff) if (a+int32(-2**31) < b+int32(-2**31)) else int32(0)
+    c = int32(-1) if (a+int32(-2**31) < b+int32(-2**31)) else int32(0)
     return c,c.is_integer
 
 
