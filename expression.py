@@ -1,3 +1,7 @@
+from _expression_topostfix import infix_to_postfix
+from _expression_evaluation import evaluate_expression
+from numpy import int32
+
 _NEW_TOKEN = 0
 _DOT_OPERAND  = 1
 _LESS_THAN    = 2
@@ -12,9 +16,35 @@ _APOSTROPHE_2 = 8
 
 class Expression(object): # Made of tokens (operators, variables, etc)
     def __init__(self, expression = "") -> None:
-        self.set_expression(expression)
+        self._set_expression(expression)
+        if self.is_imm_expression():
+            self.postfix = infix_to_postfix(self.tokens[1:]) # error = (postfix == [])
+        else:
+            self.postfix = infix_to_postfix(self.tokens) # error = (postfix == [])
+        self.evaluated = False
+        self.value = int32(0)
 
-    def set_expression(self, expression : str):
+    def evaluate(self, plc:int, variable_list : dict[str,int32]) -> list[bool,bool]: # return evaluated,error
+        if self.is_imm_expression() or self.is_regular_expression():
+            if self.evaluated:
+                error = False
+            else:
+                self.value,self.evaluated,error = evaluate_expression(self.postfix, plc, variable_list)
+        else:
+            self.evaluated = False
+            error = True
+        return self.evaluated,error
+    
+    def need_evaluation(self):
+        return (self.is_imm_expression() or self.is_regular_expression()) and not self.is_evaluated()
+
+    def is_evaluated(self):
+        return self.evaluated
+    
+    def get_value(self):
+        return self.value
+
+    def _set_expression(self, expression : str):
         self.tokens = []
 
         state = _NEW_TOKEN
@@ -58,7 +88,7 @@ class Expression(object): # Made of tokens (operators, variables, etc)
                         current_token = ''
                         state = _NEW_TOKEN
                 elif state == _REG_NUMBER:
-                    if c.isnumeric():
+                    if c.isnumeric() or c.upper() in ['A','B','C','D','E','F']:
                         current_token += c
                         processed_character = True
                     elif c.upper() in ['H','B','Q']:
@@ -71,7 +101,7 @@ class Expression(object): # Made of tokens (operators, variables, etc)
                         self.tokens.append(current_token)
                         current_token = ''
                 elif state == _HEX_NUMBER:
-                    if c.isnumeric():
+                    if c.isnumeric() or c.upper() in ['A','B','C','D','E','F']:
                         current_token += c
                         processed_character = True
                     else:

@@ -16,6 +16,12 @@ class Instruction(object):
     
     def expects_operands(self) -> bool:
         return not (INH in self.opcodes)
+    
+    def is_relative(self) -> bool:
+        return REL in self.opcodes or \
+            DIR_MSK_REL in self.opcodes or \
+            INDX_MSK_REL in self.opcodes or \
+            INDY_MSK_REL in self.opcodes
 
 INSTRUCTION_SET = {
     'ABA' : Instruction('ABA', {INH:'1B'}),
@@ -25,7 +31,7 @@ INSTRUCTION_SET = {
     'ADCB': Instruction('ADCB',{IMM:'C9', DIR:'D9', EXT:'F9', INDX:'E9', INDY:'18E9'}),
     'ADDA': Instruction('ADDA',{IMM:'8B', DIR:'9B', EXT:'BB', INDX:'AB', INDY:'18AB'}),
     'ADDB': Instruction('ADDB',{IMM:'CB', DIR:'DB', EXT:'FB', INDX:'EB', INDY:'18EB'}),
-    'ADDD': Instruction('ADDD',{IMM:'C3', DIR:'D3', EXT:'F3', INDX:'E3', INDY:'18E3'}),
+    'ADDD': Instruction('ADDD',{IMM16:'C3', DIR:'D3', EXT:'F3', INDX:'E3', INDY:'18E3'}),
     'ANDA': Instruction('ANDA',{IMM:'84', DIR:'94', EXT:'B4', INDX:'A4', INDY:'18A4'}),
     'ANDB': Instruction('ANDB',{IMM:'C4', DIR:'D4', EXT:'F4', INDX:'E4', INDY:'18E4'}),
     'ASL' : Instruction('ASL',                     {EXT:'78', INDX:'68', INDY:'1868'}),
@@ -74,9 +80,9 @@ INSTRUCTION_SET = {
     'COM' : Instruction('COM',                     {EXT:'73', INDX:'63', INDY:'1863'}),
     'COMA': Instruction('COMA',{INH:'43'}),
     'COMB': Instruction('COMB',{INH:'53'}),
-    'CPD' : Instruction('CPD', {IMM:'1A83',DIR:'1A93',EXT:'1AB3',INDX:'1AA3',INDY:'CDA3'}),
-    'CPX' : Instruction('CPX', {IMM:'8C', DIR:'9C', EXT:'BC', INDX:'AC', INDY:'CDAC'}),
-    'CPY' : Instruction('CPY', {IMM:'188C',DIR:'189C',EXT:'18BC',INDX:'1AAC',INDY:'18AC'}),
+    'CPD' : Instruction('CPD', {IMM16:'1A83',DIR:'1A93',EXT:'1AB3',INDX:'1AA3',INDY:'CDA3'}),
+    'CPX' : Instruction('CPX', {IMM16:'8C', DIR:'9C', EXT:'BC', INDX:'AC', INDY:'CDAC'}),
+    'CPY' : Instruction('CPY', {IMM16:'188C',DIR:'189C',EXT:'18BC',INDX:'1AAC',INDY:'18AC'}),
     'DAA' : Instruction('DAA', {INH:'19'}),
     'DEC' : Instruction('DEC',                     {EXT:'7A', INDX:'6A', INDY:'186A'}),
     'DECA': Instruction('DECA',{INH:'4A'}),
@@ -99,11 +105,11 @@ INSTRUCTION_SET = {
     'JSR' : Instruction('JSR',           {DIR:'9D', EXT:'BD', INDX:'AD', INDY:'18AD'}),
     'LDAA': Instruction('LDAA',{IMM:'86', DIR:'96', EXT:'B6', INDX:'A6', INDY:'18A6'}),
     'LDAB': Instruction('LDAB',{IMM:'C6', DIR:'D6', EXT:'F6', INDX:'E6', INDY:'18E6'}),
-    'LDD' : Instruction('LDD', {IMM:'CC', DIR:'DC', EXT:'FC', INDX:'EC', INDY:'18EC'}),
+    'LDD' : Instruction('LDD', {IMM16:'CC', DIR:'DC', EXT:'FC', INDX:'EC', INDY:'18EC'}),
 
-    'LDS' : Instruction('LDS', {IMM:'8E', DIR:'9E', EXT:'BE', INDX:'AE', INDY:'18AE'}),
-    'LDX' : Instruction('LDX', {IMM:'CE', DIR:'DE', EXT:'FE', INDX:'EE', INDY:'CDEE'}),
-    'LDY' : Instruction('LDY', {IMM:'18CE',DIR:'18DE',EXT:'18FE',INDX:'1AEE', INDY:'18EE'}),
+    'LDS' : Instruction('LDS', {IMM16:'8E', DIR:'9E', EXT:'BE', INDX:'AE', INDY:'18AE'}),
+    'LDX' : Instruction('LDX', {IMM16:'CE', DIR:'DE', EXT:'FE', INDX:'EE', INDY:'CDEE'}),
+    'LDY' : Instruction('LDY', {IMM16:'18CE',DIR:'18DE',EXT:'18FE',INDX:'1AEE', INDY:'18EE'}),
     'LSL' : Instruction('LSL',                     {EXT:'78', INDX:'68', INDY:'1868'}),
     'LSLA': Instruction('LSLA',{INH:'48'}),
     'LSLB': Instruction('LSLB',{INH:'58'}),
@@ -152,7 +158,7 @@ INSTRUCTION_SET = {
     'STY' : Instruction('STY',           {DIR:'18DF',EXT:'18FF',INDX:'1AEF',INDY:'18EF'}),
     'SUBA': Instruction('SUBA',{IMM:'80', DIR:'90', EXT:'B0', INDX:'A0', INDY:'18A0'}),
     'SUBB': Instruction('SUBB',{IMM:'C0', DIR:'D0', EXT:'F0', INDX:'E0', INDY:'18E0'}),
-    'SUBD': Instruction('SUBD',{IMM:'83', DIR:'93', EXT:'B3', INDX:'A3', INDY:'18A3'}),
+    'SUBD': Instruction('SUBD',{IMM16:'83', DIR:'93', EXT:'B3', INDX:'A3', INDY:'18A3'}),
     'SWI' : Instruction('SWI', {INH:'3F'}),
     'TAB' : Instruction('TAB', {INH:'16'}),
     'TAP' : Instruction('TAP', {INH:'06'}),

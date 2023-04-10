@@ -97,7 +97,11 @@ def evaluate_expression(tokens : list[str,CompilerOperator], plc: int, variable_
                     evaluated = False
                     break
             elif token == '*':
-                variable = plc
+                if plc != None:
+                    variable = plc
+                else:
+                    evaluated = False # El PLC no esta definido!!!
+                    break                    
             elif token[0].isalpha() or token[0] in ['?','@','_']:
                 if token in variable_list:
                     variable = variable_list[token]
