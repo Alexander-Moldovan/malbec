@@ -1,6 +1,6 @@
 from expression import Expression
 from addressingmodes import *
-from numpy import int32
+from numpy import int32,uint32
 
 REL_OFFSET_LIST = {EXT: 2, DIR_MSK_REL: 4, INDX_MSK_REL: 4, INDY_MSK_REL: 5} # (doesnt distinguish among EXT, DIR or REL)
 
@@ -9,7 +9,11 @@ class Operand(object): # Made of expressions, separated by commas
         self._set_operand(operand, relative)
 
     def __repr__(self):
-        return self.original_string
+        s = ''
+        for e in self.expressions:
+            s += f'{e},'
+        s = s[:-1]
+        return f'{self.original_string :<20} -> {s}'
     
     def _set_operand(self, operand : str, relative : bool):
         self.original_string = operand
@@ -18,7 +22,7 @@ class Operand(object): # Made of expressions, separated by commas
         if relative:
             if self.own_addmode in REL_OFFSET_LIST: 
                 offset = REL_OFFSET_LIST[self.own_addmode]
-                new_expr_str = f'({operand.split(",")[-1]})-(*+{offset})'
+                new_expr_str = f'({operand.split(",")[-1]})-(*+{offset})' # TODO: checkear que exista posicion [-1]
                 self.expressions[-1] = Expression(new_expr_str)
 
                 # print(f'OLD ADDRESSING MODE = {self.own_addmode}')
@@ -52,44 +56,95 @@ class Operand(object): # Made of expressions, separated by commas
                     break
         return evaluated,error # evaluated only true if all evaluable expressions are evaluated
     
+    def get_regular_expressions(self,expression_min,expression_max,expression_size_in_bytes) -> list[str,bool,bool]:
+        error = False
+        operands = ''
+
+        evaluated = not self.needs_evaluation()
+        if self.check_only_regular_expressions():
+            for expression in self.expressions:
+                value = expression.get_value()
+                if expression_min <= value <= expression_max:
+                    operands += f'{value :08X}'[-(2*expression_size_in_bytes):]
+                else:
+                    error = True
+                    break
+        else:
+            error = True
+
+        return operands,evaluated,error
+
+    def get_32bit_operand(self) -> list[int32,bool,bool]:
+        error = False
+        operands = 0
+
+        evaluated = not self.needs_evaluation()
+        if self.own_addmode == EXT:
+            operands = self.expressions[0].get_value()
+        else:
+            error = True
+        return operands,evaluated,error
+
     # TODO: resolver tema de REL, porq no evalua expresion tal, sino la resta!!!
     # (incluye los DIR_MSK_REL, INDX_MSK_REL y INDY_MSK_REL)
-    def get_operands(self, addressing_mode) -> list[str,bool,bool]:
+    def get_operands(self, addressing_mode) -> list[str,bool,bool]: # TODO: tirar warnings si se va de rango (y lo mismo para las directivas)
         error = False   
         operands = ''
 
         # aca asumo q me pidieron bien los add_modes
 
         evaluated = not self.needs_evaluation()
+
         if self.own_addmode == INH:
             operands = f''
-        elif self.own_addmode == IMM16: # NOTA: distinguir caso IMM y IMM16
-            imm16 = self.expressions[0].get_value()
-            operands = f'{imm16 : 04X}'[-4:]
-        elif self.own_addmode == EXT: # NOTA: distinguir caso EXT, DIR y REL
-            extadd = self.expressions[0].get_value()
-            operands = f'{extadd : 04X}'[-4:]
+
+        elif self.own_addmode == IMM16:
+            imm16 = uint32(self.expressions[0].get_value())
+            if addressing_mode == IMM16:
+                operands = f'{imm16 :04X}'[-4:]
+            elif addressing_mode == IMM:
+                operands = f'{imm16 :02X}'[-2:]
+            else:
+                print(f'ERROR: specified addressing mode {addressing_mode} not compatible with {self.own_addmode}')
+                operands = ''
+                error = True
+
+        elif self.own_addmode == EXT: # TODO: hacer funcion dir
+            extadd = uint32(self.expressions[0].get_value())
+            if addressing_mode == EXT:
+                operands = f'{extadd :04X}'[-4:]
+            elif addressing_mode == DIR or addressing_mode == REL:
+                operands = f'{extadd :02X}'[-2:]
+            else:
+                print(f'ERROR: specified addressing mode {addressing_mode} not compatible with {self.own_addmode}')
+                operands = ''
+                error = True
+
         elif self.own_addmode == INDX or self.own_addmode == INDY:
-            indoff = self.expressions[0].get_value()
-            operands = f'{indoff : 02X}'[-2:]
+            indoff = uint32(self.expressions[0].get_value())
+            operands = f'{indoff :02X}'[-2:]
+
         elif self.own_addmode == DIR_MSK:
-            diradd = self.expressions[0].get_value()
-            mask = self.expressions[1].get_value()
-            operands = f'{diradd : 02X}'[-2:] + f'{mask : 02X}'[-2:] # TODO: check order
+            diradd = uint32(self.expressions[0].get_value())
+            mask = uint32(self.expressions[1].get_value())
+            operands = f'{diradd :02X}'[-2:] + f'{mask :02X}'[-2:] # TODO: check order
+
         elif self.own_addmode == INDX_MSK or self.own_addmode == INDY_MSK:
-            indoff = self.expressions[0].get_value()
-            mask = self.expressions[2].get_value()
-            operands = f'{indoff : 02X}'[-2:] + f'{mask : 02X}'[-2:] # TODO: check order
+            indoff = uint32(self.expressions[0].get_value())
+            mask = uint32(self.expressions[2].get_value())
+            operands = f'{indoff :02X}'[-2:] + f'{mask :02X}'[-2:] # TODO: check order
+
         elif self.own_addmode == DIR_MSK_REL:
-            diradd = self.expressions[0].get_value()
-            mask = self.expressions[1].get_value()
-            rel = self.expressions[2].get_value()
-            operands = f'{diradd : 02X}'[-2:] + f'{mask : 02X}'[-2:] + f'{rel : 02X}'[-2:] # TODO: check order
+            diradd = uint32(self.expressions[0].get_value())
+            mask = uint32(self.expressions[1].get_value())
+            rel = uint32(self.expressions[2].get_value())
+            operands = f'{diradd :02X}'[-2:] + f'{mask :02X}'[-2:] + f'{rel :02X}'[-2:] # TODO: check order
+
         elif self.own_addmode == INDX_MSK_REL or self.own_addmode == INDY_MSK_REL:
-            indoff = self.expressions[0].get_value()
-            mask = self.expressions[2].get_value()
-            rel = self.expressions[3].get_value()
-            operands = f'{indoff : 02X}'[-2:] + f'{mask : 02X}'[-2:] + f'{rel : 02X}'[-2:] # TODO: check order
+            indoff = uint32(self.expressions[0].get_value())
+            mask = uint32(self.expressions[2].get_value())
+            rel = uint32(self.expressions[3].get_value())
+            operands = f'{indoff :02X}'[-2:] + f'{mask :02X}'[-2:] + f'{rel :02X}'[-2:] # TODO: check order
         else:
             print(f'ERROR: invalid addressing mode {self.own_addmode}')
             operands = ''
@@ -97,8 +152,41 @@ class Operand(object): # Made of expressions, separated by commas
 
         return operands,evaluated,error
 
+    def check_only_regular_expressions(self):
+        if len(self.expressions) == 0:
+            return False
+        answer = True
+        for expression in self.expressions:
+            if not expression.is_regular_expression():
+                answer = False
+                break
+        return answer
+    
+    # TODO: CORREGIR: problemas con , o ESPACIOS en strings
+    def check_single_string(self):
+        return len(self.expressions) == 1 and self.expressions[0].is_single_string()
 
-    def check_addressing_mode(self, addressing_mode) -> bool: # Comprobar por afuera que sea EXT, DIR o REL
+    def get_single_string(self) -> list[str,bool]:
+        if self.check_single_string():
+            operands,error = self.expressions[0].get_string()
+        else:
+            operands = ''
+            error = True
+        return operands,error # No 'evaluated' variable since a string is always 'evaluated'
+
+    def get_ammount_of_expressions(self):
+        return len(self.expressions)
+    
+    def is_value_direct(self) -> bool:
+        if self.own_addmode == EXT:
+            if not self.needs_evaluation():
+                return 0 <= self.expressions[0].get_value() < 256
+            else:
+                return False
+        else:
+            return False
+
+    def check_addressing_mode(self, addressing_mode) -> bool: # Comprobar por afuera entre EXT, DIR y REL; y entre IMM16 y IMM
         # own_addmode = self._get_addressing_mode()
         if(self.own_addmode == EXT):
             return addressing_mode == EXT or addressing_mode == DIR or addressing_mode == REL

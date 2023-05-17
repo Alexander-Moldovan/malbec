@@ -1,6 +1,7 @@
 #from compiler import Compiler
-from compiler import precompile
+from compiler import precompile, compile
 from textfile import TextFile
+from numpy import uint32
 
 #c = Compiler()
 tf = TextFile('_testfile0.msa')
@@ -8,5 +9,11 @@ tf = TextFile('_testfile0.msa')
 with open('output.txt','w') as out:
 #    out.write(f'{c.precompile(tf)}')
     precompiled = precompile(tf)
+    varlist,error = compile(precompiled)
+    out.write(f'FIRST COMPILATION\n')
+    out.write(f'ERROR = {error}\n')
+    for var in varlist:
+        out.write(f'{var :>20} = {uint32(varlist[var]) :08X} = {varlist[var]}\n ')
+    out.write('\n')
     for line in precompiled:
         out.write(f'{line}\n')

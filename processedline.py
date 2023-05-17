@@ -1,9 +1,12 @@
 from operand import Operand
 from addressingmodes import *
-from numpy import int16
+from numpy import int16, uint16
 
 class ProcessedLine(object):
-    def __init__(self, address = int16(0), code = "", addressing_mode = UNDEFINED_ADDRESSING_MODE, label = None, instruction = None, operand = '', relative_operand = False) -> None:
+    def __init__(self, source_line_number : int,source_line : str, address = None, code = "", addressing_mode = UNDEFINED_ADDRESSING_MODE, label = None, instruction = None, operand = '', relative_operand = False) -> None:
+        self.source_line_number = source_line_number
+        self.source_line = source_line
+
         self.address = address
         self.code = code
         self.addmode = addressing_mode
@@ -22,4 +25,4 @@ class ProcessedLine(object):
         self.operand = Operand(operand,relative)
 
     def __repr__(self): #TODO: cambiar el modo de acceder al addmode
-        return f'ADD:{self.address : 04X}\tCODE:{self.code}\tADDMODE:{self.operand.own_addmode}\tLABEL:{self.label if self.label!=None else " " :<8}\tINST:{self.instruction}\tOPER:{self.operand}'
+        return f'ADD:{(uint16(self.address) if self.address != None else int16(0)) :04X}\tCODE:{self.code : <8}\tADDMODE:{self.operand.own_addmode if self.addmode == UNDEFINED_ADDRESSING_MODE else self.addmode}\tLABEL:{self.label if self.label!=None else " " :<16}\tINST:{self.instruction}\tOPER:{self.operand}'

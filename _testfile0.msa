@@ -1,6 +1,37 @@
 	p68h11
 
+* Cosas para testear:
+
+	ORG	$2000
+
+	inc	$10
+	ldaa	$10
+	ldaa	$100
+	ldaa	255
+	ldaa	256
+	ldaa	-1
+
+label1			
+*			$2000
+label2	EQU	*+4	$2004
+label3	ldaa	#3	$2000
+label35	FCB	2,3,4	$2002
+label4	RMB	4	$2005
+label5	ORG	*+4	$200D
+
+labelA	ORG	$ABCD0000
+l____A	EQU	.HWRD.labelA
+	ldaa	#2
+l___AA	EQU	.HWRD.*
+
+
+*	ORG	2,x
+*	ldaa	#2,2,2
+
+*	FCC	'Testing_''strings'''
+
 * NOTA: LE QUITE TODOS LOS SETS Y MACROS A ESTE ARCHIVO. NO COMPILARA, PERO AL MENOS PODRÁ PASAR POR EL PRECOMPILADOR
+
 
 HEIGHT	EQU	128
 WIDTH	EQU	128

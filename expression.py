@@ -24,6 +24,12 @@ class Expression(object): # Made of tokens (operators, variables, etc)
         self.evaluated = False
         self.value = int32(0)
 
+    def __repr__(self):
+        s = ''
+        for t in self.tokens:
+            s += f'{t}'
+        return s
+
     def evaluate(self, plc:int, variable_list : dict[str,int32]) -> list[bool,bool]: # return evaluated,error
         if self.is_imm_expression() or self.is_regular_expression():
             if self.evaluated:
@@ -34,7 +40,7 @@ class Expression(object): # Made of tokens (operators, variables, etc)
             self.evaluated = False
             error = True
         return self.evaluated,error
-    
+
     def need_evaluation(self):
         return (self.is_imm_expression() or self.is_regular_expression()) and not self.is_evaluated()
 
@@ -43,6 +49,22 @@ class Expression(object): # Made of tokens (operators, variables, etc)
     
     def get_value(self):
         return self.value
+    
+    def is_single_string(self):
+        return len(self.tokens) == 1 and len(self.tokens[0]) >= 2 and self.tokens[0][0] == '\'' and self.tokens[0][-1] == '\''
+    
+    def get_string(self) -> list[str,bool]:
+        error = False
+        string = ''
+        if self.is_single_string():
+            original = self.tokens[0][1:-1].replace('\'\'','\'')
+            for c in original:
+                string += f'{ord(c) :02X}'
+            self.evaluated = True
+        else:
+            error = True
+
+        return string if not error else '',error
 
     def _set_expression(self, expression : str):
         self.tokens = []
@@ -150,7 +172,7 @@ class Expression(object): # Made of tokens (operators, variables, etc)
                 elif c == '\'':
                     current_token = c
                     state = _APOSTROPHE_1
-        if current_token != '': # TODO: corroborar que sea válido
+        if current_token != '': # TODO: corroborar que sea válido (ejemplo: ''' es valido segun el algoritmo, pero no segun el compilador. checkear)
             self.tokens.append(current_token)
 
     def get_tokens(self) -> list[str]: #TODO: determinar si es necesario este metodo
