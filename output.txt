@@ -85,10 +85,10 @@ ERROR = False
                 rot_z = 0000F008 = 61448
  
 ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:P68H11	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:$2000                -> $2000
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:ORG	OPER:$2000                -> $2000
 ADD:2000	CODE:686F6C615F61	ADDMODE:---	LABEL:                	INST:FCC	OPER:'hola_a'             -> 'hola_a'
 ADD:2006	CODE:746F646F73	ADDMODE:---	LABEL:                	INST:FCC	OPER:'todos'              -> 'todos'
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:$2000                -> $2000
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:ORG	OPER:$2000                -> $2000
 ADD:2000	CODE:7C0010  	ADDMODE:Ext	LABEL:                	INST:INC	OPER:$10                  -> $10
 ADD:2003	CODE:9610    	ADDMODE:Dir	LABEL:                	INST:LDAA	OPER:$10                  -> $10
 ADD:2005	CODE:B60100  	ADDMODE:Ext	LABEL:                	INST:LDAA	OPER:$100                 -> $100
@@ -96,53 +96,53 @@ ADD:2008	CODE:96FF    	ADDMODE:Dir	LABEL:                	INST:LDAA	OPER:255    
 ADD:200A	CODE:B60100  	ADDMODE:Ext	LABEL:                	INST:LDAA	OPER:256                  -> 256
 ADD:200D	CODE:B6FFFF  	ADDMODE:Ext	LABEL:                	INST:LDAA	OPER:-1                   -> -1
 ADD:0000	CODE:        	ADDMODE:---	LABEL:label1          	INST:None	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:label2          	INST:EQU	OPER:*+4                  -> *+4
+ADD:0000	CODE:        	ADDMODE:---	LABEL:label2          	INST:EQU	OPER:*+4                  -> *+4
 ADD:2010	CODE:8603    	ADDMODE:Imm	LABEL:label3          	INST:LDAA	OPER:#3                   -> #3
 ADD:2012	CODE:020304  	ADDMODE:---	LABEL:label35         	INST:FCB	OPER:2,3,4                -> 2,3,4
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:label4          	INST:RMB	OPER:4                    -> 4
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:label5          	INST:ORG	OPER:*+4                  -> *+4
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:labelA          	INST:ORG	OPER:$ABCD0000            -> $ABCD0000
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:l____A          	INST:EQU	OPER:.HWRD.labelA         -> .HWRD.labelA
+ADD:0000	CODE:        	ADDMODE:---	LABEL:label4          	INST:RMB	OPER:4                    -> 4
+ADD:0000	CODE:        	ADDMODE:---	LABEL:label5          	INST:ORG	OPER:*+4                  -> *+4
+ADD:0000	CODE:        	ADDMODE:---	LABEL:labelA          	INST:ORG	OPER:$ABCD0000            -> $ABCD0000
+ADD:0000	CODE:        	ADDMODE:---	LABEL:l____A          	INST:EQU	OPER:.HWRD.labelA         -> .HWRD.labelA
 ADD:0000	CODE:8602    	ADDMODE:Imm	LABEL:                	INST:LDAA	OPER:#2                   -> #2
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:l___AA          	INST:EQU	OPER:.HWRD.*              -> .HWRD.*
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:HEIGHT          	INST:EQU	OPER:128                  -> 128
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:WIDTH           	INST:EQU	OPER:128                  -> 128
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:STKSIZE         	INST:EQU	OPER:256                  -> 256
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:DSPSIZE         	INST:EQU	OPER:HEIGHT*WIDTH         -> HEIGHT*WIDTH
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:DISPLAY         	INST:EQU	OPER:$2000                -> $2000
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:DISPEND         	INST:EQU	OPER:DISPLAY+DSPSIZE      -> DISPLAY+DSPSIZE
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:CODE            	INST:EQU	OPER:$C000                -> $C000
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:EDGES           	INST:EQU	OPER:$E000                -> $E000
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:VERTEX          	INST:EQU	OPER:$E800                -> $E800
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:VERT_T          	INST:EQU	OPER:$EC00                -> $EC00
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:META            	INST:EQU	OPER:$F000                -> $F000
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:DISP_H          	INST:EQU	OPER:$100                 -> $100
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:DISP_W          	INST:EQU	OPER:$101                 -> $101
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:DISP_M          	INST:EQU	OPER:$102                 -> $102
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:DISP_D          	INST:EQU	OPER:$103                 -> $103
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:PORTA           	INST:EQU	OPER:$1000                -> $1000
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:EDGNUM          	INST:EQU	OPER:512                  -> 512
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:EDGSIZE         	INST:EQU	OPER:4                    -> 4
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:EDG_FRM         	INST:EQU	OPER:0                    -> 0
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:EDG_TO          	INST:EQU	OPER:1                    -> 1
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:EDG_COL         	INST:EQU	OPER:2                    -> 2
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:VTXNUM          	INST:EQU	OPER:256                  -> 256
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:VTXSIZE         	INST:EQU	OPER:4                    -> 4
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:VTX_X           	INST:EQU	OPER:0                    -> 0
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:VTX_Y           	INST:EQU	OPER:1                    -> 1
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:VTX_Z           	INST:EQU	OPER:2                    -> 2
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:CODE                 -> CODE
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:main            	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:l___AA          	INST:EQU	OPER:.HWRD.*              -> .HWRD.*
+ADD:0000	CODE:        	ADDMODE:---	LABEL:HEIGHT          	INST:EQU	OPER:128                  -> 128
+ADD:0000	CODE:        	ADDMODE:---	LABEL:WIDTH           	INST:EQU	OPER:128                  -> 128
+ADD:0000	CODE:        	ADDMODE:---	LABEL:STKSIZE         	INST:EQU	OPER:256                  -> 256
+ADD:0000	CODE:        	ADDMODE:---	LABEL:DSPSIZE         	INST:EQU	OPER:HEIGHT*WIDTH         -> HEIGHT*WIDTH
+ADD:0000	CODE:        	ADDMODE:---	LABEL:DISPLAY         	INST:EQU	OPER:$2000                -> $2000
+ADD:0000	CODE:        	ADDMODE:---	LABEL:DISPEND         	INST:EQU	OPER:DISPLAY+DSPSIZE      -> DISPLAY+DSPSIZE
+ADD:0000	CODE:        	ADDMODE:---	LABEL:CODE            	INST:EQU	OPER:$C000                -> $C000
+ADD:0000	CODE:        	ADDMODE:---	LABEL:EDGES           	INST:EQU	OPER:$E000                -> $E000
+ADD:0000	CODE:        	ADDMODE:---	LABEL:VERTEX          	INST:EQU	OPER:$E800                -> $E800
+ADD:0000	CODE:        	ADDMODE:---	LABEL:VERT_T          	INST:EQU	OPER:$EC00                -> $EC00
+ADD:0000	CODE:        	ADDMODE:---	LABEL:META            	INST:EQU	OPER:$F000                -> $F000
+ADD:0000	CODE:        	ADDMODE:---	LABEL:DISP_H          	INST:EQU	OPER:$100                 -> $100
+ADD:0000	CODE:        	ADDMODE:---	LABEL:DISP_W          	INST:EQU	OPER:$101                 -> $101
+ADD:0000	CODE:        	ADDMODE:---	LABEL:DISP_M          	INST:EQU	OPER:$102                 -> $102
+ADD:0000	CODE:        	ADDMODE:---	LABEL:DISP_D          	INST:EQU	OPER:$103                 -> $103
+ADD:0000	CODE:        	ADDMODE:---	LABEL:PORTA           	INST:EQU	OPER:$1000                -> $1000
+ADD:0000	CODE:        	ADDMODE:---	LABEL:EDGNUM          	INST:EQU	OPER:512                  -> 512
+ADD:0000	CODE:        	ADDMODE:---	LABEL:EDGSIZE         	INST:EQU	OPER:4                    -> 4
+ADD:0000	CODE:        	ADDMODE:---	LABEL:EDG_FRM         	INST:EQU	OPER:0                    -> 0
+ADD:0000	CODE:        	ADDMODE:---	LABEL:EDG_TO          	INST:EQU	OPER:1                    -> 1
+ADD:0000	CODE:        	ADDMODE:---	LABEL:EDG_COL         	INST:EQU	OPER:2                    -> 2
+ADD:0000	CODE:        	ADDMODE:---	LABEL:VTXNUM          	INST:EQU	OPER:256                  -> 256
+ADD:0000	CODE:        	ADDMODE:---	LABEL:VTXSIZE         	INST:EQU	OPER:4                    -> 4
+ADD:0000	CODE:        	ADDMODE:---	LABEL:VTX_X           	INST:EQU	OPER:0                    -> 0
+ADD:0000	CODE:        	ADDMODE:---	LABEL:VTX_Y           	INST:EQU	OPER:1                    -> 1
+ADD:0000	CODE:        	ADDMODE:---	LABEL:VTX_Z           	INST:EQU	OPER:2                    -> 2
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:ORG	OPER:CODE                 -> CODE
+ADD:0000	CODE:        	ADDMODE:---	LABEL:main            	INST:EQU	OPER:*                    -> *
 ADD:C000	CODE:8EXXXX  	ADDMODE:I16	LABEL:                	INST:LDS	OPER:#stk_in              -> #stk_in
 ADD:C003	CODE:BDXXXX  	ADDMODE:Ext	LABEL:                	INST:JSR	OPER:init_config          -> init_config
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:start           	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:start           	INST:EQU	OPER:*                    -> *
 ADD:C006	CODE:8600    	ADDMODE:Imm	LABEL:                	INST:LDAA	OPER:#$0                  -> #$0
 ADD:C008	CODE:36      	ADDMODE:Inh	LABEL:                	INST:PSHA	OPER:                     -> 
 ADD:C009	CODE:BDXXXX  	ADDMODE:Ext	LABEL:                	INST:JSR	OPER:clear_screen         -> clear_screen
 ADD:C00C	CODE:32      	ADDMODE:Inh	LABEL:                	INST:PULA	OPER:                     -> 
 ADD:C00D	CODE:BDXXXX  	ADDMODE:Ext	LABEL:                	INST:JSR	OPER:transform_vertexes   -> transform_vertexes
 ADD:C010	CODE:CEE000  	ADDMODE:I16	LABEL:                	INST:LDX	OPER:#EDGES               -> #EDGES
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:edgloop         	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:edgloop         	INST:EQU	OPER:*                    -> *
 ADD:C013	CODE:A602    	ADDMODE:Xin	LABEL:                	INST:LDAA	OPER:EDG_COL,x            -> EDG_COL,x
 ADD:C015	CODE:36      	ADDMODE:Inh	LABEL:                	INST:PSHA	OPER:                     -> 
 ADD:C016	CODE:A601    	ADDMODE:Xin	LABEL:                	INST:LDAA	OPER:EDG_TO,x             -> EDG_TO,x
@@ -176,10 +176,10 @@ ADD:C047	CODE:BCXXXX  	ADDMODE:Ext	LABEL:                	INST:CPX	OPER:edges_en
 ADD:C04A	CODE:26C7    	ADDMODE:Rel	LABEL:                	INST:BNE	OPER:edgloop              -> (edgloop)-(*+2)
 ADD:C04C	CODE:20B8    	ADDMODE:Rel	LABEL:                	INST:BRA	OPER:start                -> (start)-(*+2)
 ADD:C04E	CODE:20FE    	ADDMODE:Rel	LABEL:fin             	INST:BRA	OPER:fin                  -> (fin)-(*+2)
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:transform_vertexes	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:transform_vertexes	INST:EQU	OPER:*                    -> *
 ADD:C050	CODE:CEE800  	ADDMODE:I16	LABEL:                	INST:LDX	OPER:#VERTEX              -> #VERTEX
 ADD:C053	CODE:18CEEC00	ADDMODE:I16	LABEL:                	INST:LDY	OPER:#VERT_T              -> #VERT_T
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:copyver         	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:copyver         	INST:EQU	OPER:*                    -> *
 ADD:C057	CODE:A600    	ADDMODE:Xin	LABEL:                	INST:LDAA	OPER:VTX_X,x              -> VTX_X,x
 ADD:C059	CODE:18A700  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:VTX_X,y              -> VTX_X,y
 ADD:C05C	CODE:A601    	ADDMODE:Xin	LABEL:                	INST:LDAA	OPER:VTX_Y,x              -> VTX_Y,x
@@ -193,7 +193,7 @@ ADD:C06B	CODE:BCXXXX  	ADDMODE:Ext	LABEL:                	INST:CPX	OPER:vertex_e
 ADD:C06E	CODE:26E7    	ADDMODE:Rel	LABEL:                	INST:BNE	OPER:copyver              -> (copyver)-(*+2)
 ADD:C070	CODE:1830    	ADDMODE:Inh	LABEL:                	INST:TSY	OPER:                     -> 
 ADD:C072	CODE:CEEC00  	ADDMODE:I16	LABEL:                	INST:LDX	OPER:#VERT_T              -> #VERT_T
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:transf_single_vtx	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:transf_single_vtx	INST:EQU	OPER:*                    -> *
 ADD:C075	CODE:B6XXXX  	ADDMODE:Ext	LABEL:                	INST:LDAA	OPER:rot_z                -> rot_z
 ADD:C078	CODE:36      	ADDMODE:Inh	LABEL:                	INST:PSHA	OPER:                     -> 
 ADD:C079	CODE:A601    	ADDMODE:Xin	LABEL:                	INST:LDAA	OPER:VTX_Y,x              -> VTX_Y,x
@@ -235,7 +235,7 @@ ADD:C0B3	CODE:3A      	ADDMODE:Inh	LABEL:                	INST:ABX	OPER:        
 ADD:C0B4	CODE:BCXXXX  	ADDMODE:Ext	LABEL:                	INST:CPX	OPER:vert_t_end           -> vert_t_end
 ADD:C0B7	CODE:26BC    	ADDMODE:Rel	LABEL:                	INST:BNE	OPER:transf_single_vtx    -> (transf_single_vtx)-(*+2)
 ADD:C0B9	CODE:39      	ADDMODE:Inh	LABEL:                	INST:RTS	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:line_drawer     	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:line_drawer     	INST:EQU	OPER:*                    -> *
 ADD:C0BA	CODE:30      	ADDMODE:Inh	LABEL:                	INST:TSX	OPER:                     -> 
 ADD:C0BB	CODE:8F      	ADDMODE:Inh	LABEL:                	INST:XGDX	OPER:                     -> 
 ADD:C0BC	CODE:83XXXX  	ADDMODE:I16	LABEL:                	INST:SUBD	OPER:#TEMPSTK             -> #TEMPSTK
@@ -268,10 +268,10 @@ ADD:C0EF	CODE:18A6XX  	ADDMODE:Yin	LABEL:                	INST:LDAA	OPER:Y1,y   
 ADD:C0F2	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:Y_POINT,y            -> Y_POINT,y
 ADD:C0F5	CODE:BDXXXX  	ADDMODE:Ext	LABEL:                	INST:JSR	OPER:point_drawer         -> point_drawer
 ADD:C0F8	CODE:7EXXXX  	ADDMODE:Ext	LABEL:                	INST:JMP	OPER:end_of_line_drawer   -> end_of_line_drawer
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:det_main_coor   	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:det_main_coor   	INST:EQU	OPER:*                    -> *
 ADD:C0FB	CODE:11      	ADDMODE:Inh	LABEL:                	INST:CBA	OPER:                     -> 
 ADD:C0FC	CODE:25XX    	ADDMODE:Rel	LABEL:                	INST:BLO	OPER:deltaY_main          -> (deltaY_main)-(*+2)
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:deltaX_main     	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:deltaX_main     	INST:EQU	OPER:*                    -> *
 ADD:C0FE	CODE:18A6XX  	ADDMODE:Yin	LABEL:                	INST:LDAA	OPER:X1,y                 -> X1,y
 ADD:C101	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:MA_INIT,y            -> MA_INIT,y
 ADD:C104	CODE:36      	ADDMODE:Inh	LABEL:                	INST:PSHA	OPER:                     -> 
@@ -296,7 +296,7 @@ ADD:C12A	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:MI_DELT
 ADD:C12D	CODE:8601    	ADDMODE:Imm	LABEL:                	INST:LDAA	OPER:#1                   -> #1
 ADD:C12F	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:MI_OFFS,y            -> MI_OFFS,y
 ADD:C132	CODE:20XX    	ADDMODE:Rel	LABEL:                	INST:BRA	OPER:start_line           -> (start_line)-(*+2)
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:deltaY_main     	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:deltaY_main     	INST:EQU	OPER:*                    -> *
 ADD:C134	CODE:18A6XX  	ADDMODE:Yin	LABEL:                	INST:LDAA	OPER:Y1,y                 -> Y1,y
 ADD:C137	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:MA_INIT,y            -> MA_INIT,y
 ADD:C13A	CODE:36      	ADDMODE:Inh	LABEL:                	INST:PSHA	OPER:                     -> 
@@ -320,15 +320,15 @@ ADD:C15E	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:MI_SIGN
 ADD:C161	CODE:32      	ADDMODE:Inh	LABEL:                	INST:PULA	OPER:                     -> 
 ADD:C162	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:MI_DELT,y            -> MI_DELT,y
 ADD:C165	CODE:186FXX  	ADDMODE:Yin	LABEL:                	INST:CLR	OPER:MI_OFFS,y            -> MI_OFFS,y
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:start_line      	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:start_line      	INST:EQU	OPER:*                    -> *
 ADD:C168	CODE:18A6XX  	ADDMODE:Yin	LABEL:                	INST:LDAA	OPER:MA_DELT,y            -> MA_DELT,y
 ADD:C16B	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:COUNTER,y            -> COUNTER,y
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:line_loop       	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:line_loop       	INST:EQU	OPER:*                    -> *
 ADD:C16E	CODE:18A6XX  	ADDMODE:Yin	LABEL:                	INST:LDAA	OPER:COUNTER,y            -> COUNTER,y
 ADD:C171	CODE:186DXX  	ADDMODE:Yin	LABEL:                	INST:TST	OPER:MA_SIGN,y            -> MA_SIGN,y
 ADD:C174	CODE:27XX    	ADDMODE:Rel	LABEL:                	INST:BEQ	OPER:ma_off_ready         -> (ma_off_ready)-(*+2)
 ADD:C176	CODE:40      	ADDMODE:Inh	LABEL:                	INST:NEGA	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:ma_off_ready    	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:ma_off_ready    	INST:EQU	OPER:*                    -> *
 ADD:C177	CODE:18ABXX  	ADDMODE:Yin	LABEL:                	INST:ADDA	OPER:MA_INIT,y            -> MA_INIT,y
 ADD:C17A	CODE:30      	ADDMODE:Inh	LABEL:                	INST:TSX	OPER:                     -> 
 ADD:C17B	CODE:18E6XX  	ADDMODE:Yin	LABEL:                	INST:LDAB	OPER:MA_OFFS,y            -> MA_OFFS,y
@@ -351,19 +351,19 @@ ADD:C196	CODE:03      	ADDMODE:Inh	LABEL:                	INST:FDIV	OPER:       
 ADD:C197	CODE:8F      	ADDMODE:Inh	LABEL:                	INST:XGDX	OPER:                     -> 
 ADD:C198	CODE:4D      	ADDMODE:Inh	LABEL:                	INST:TSTA	OPER:                     -> 
 ADD:C199	CODE:2AXX    	ADDMODE:Rel	LABEL:                	INST:BPL	OPER:dont_round_up_line   -> (dont_round_up_line)-(*+2)
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:round_up_line   	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:round_up_line   	INST:EQU	OPER:*                    -> *
 ADD:C19B	CODE:38      	ADDMODE:Inh	LABEL:                	INST:PULX	OPER:                     -> 
 ADD:C19C	CODE:8F      	ADDMODE:Inh	LABEL:                	INST:XGDX	OPER:                     -> 
 ADD:C19D	CODE:5C      	ADDMODE:Inh	LABEL:                	INST:INCB	OPER:                     -> 
 ADD:C19E	CODE:20XX    	ADDMODE:Rel	LABEL:                	INST:BRA	OPER:mi_off_rounded       -> (mi_off_rounded)-(*+2)
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:dont_round_up_line	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:dont_round_up_line	INST:EQU	OPER:*                    -> *
 ADD:C1A0	CODE:38      	ADDMODE:Inh	LABEL:                	INST:PULX	OPER:                     -> 
 ADD:C1A1	CODE:8F      	ADDMODE:Inh	LABEL:                	INST:XGDX	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:mi_off_rounded  	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:mi_off_rounded  	INST:EQU	OPER:*                    -> *
 ADD:C1A2	CODE:186DXX  	ADDMODE:Yin	LABEL:                	INST:TST	OPER:MI_SIGN,y            -> MI_SIGN,y
 ADD:C1A5	CODE:27XX    	ADDMODE:Rel	LABEL:                	INST:BEQ	OPER:mi_off_ready         -> (mi_off_ready)-(*+2)
 ADD:C1A7	CODE:50      	ADDMODE:Inh	LABEL:                	INST:NEGB	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:mi_off_ready    	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:mi_off_ready    	INST:EQU	OPER:*                    -> *
 ADD:C1A8	CODE:18EBXX  	ADDMODE:Yin	LABEL:                	INST:ADDB	OPER:MI_INIT,y            -> MI_INIT,y
 ADD:C1AB	CODE:17      	ADDMODE:Inh	LABEL:                	INST:TBA	OPER:                     -> 
 ADD:C1AC	CODE:30      	ADDMODE:Inh	LABEL:                	INST:TSX	OPER:                     -> 
@@ -375,14 +375,14 @@ ADD:C1B6	CODE:186DXX  	ADDMODE:Yin	LABEL:                	INST:TST	OPER:COUNTER,
 ADD:C1B9	CODE:27XX    	ADDMODE:Rel	LABEL:                	INST:BEQ	OPER:end_of_line_drawer   -> (end_of_line_drawer)-(*+2)
 ADD:C1BB	CODE:186AXX  	ADDMODE:Yin	LABEL:                	INST:DEC	OPER:COUNTER,y            -> COUNTER,y
 ADD:C1BE	CODE:20AE    	ADDMODE:Rel	LABEL:                	INST:BRA	OPER:line_loop            -> (line_loop)-(*+2)
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:end_of_line_drawer	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:end_of_line_drawer	INST:EQU	OPER:*                    -> *
 ADD:C1C0	CODE:30      	ADDMODE:Inh	LABEL:                	INST:TSX	OPER:                     -> 
 ADD:C1C1	CODE:8F      	ADDMODE:Inh	LABEL:                	INST:XGDX	OPER:                     -> 
 ADD:C1C2	CODE:C3XXXX  	ADDMODE:I16	LABEL:                	INST:ADDD	OPER:#TEMPSTK             -> #TEMPSTK
 ADD:C1C5	CODE:8F      	ADDMODE:Inh	LABEL:                	INST:XGDX	OPER:                     -> 
 ADD:C1C6	CODE:35      	ADDMODE:Inh	LABEL:                	INST:TXS	OPER:                     -> 
 ADD:C1C7	CODE:39      	ADDMODE:Inh	LABEL:                	INST:RTS	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:rotate          	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:rotate          	INST:EQU	OPER:*                    -> *
 ADD:C1C8	CODE:1830    	ADDMODE:Inh	LABEL:                	INST:TSY	OPER:                     -> 
 ADD:C1CA	CODE:18E6XX  	ADDMODE:Yin	LABEL:                	INST:LDAB	OPER:Y_IN,y               -> Y_IN,y
 ADD:C1CD	CODE:37      	ADDMODE:Inh	LABEL:                	INST:PSHB	OPER:                     -> 
@@ -418,17 +418,17 @@ ADD:C202	CODE:32      	ADDMODE:Inh	LABEL:                	INST:PULA	OPER:       
 ADD:C203	CODE:1B      	ADDMODE:Inh	LABEL:                	INST:ABA	OPER:                     -> 
 ADD:C204	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:X_OUT,y              -> X_OUT,y
 ADD:C207	CODE:39      	ADDMODE:Inh	LABEL:                	INST:RTS	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:clear_screen    	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:clear_screen    	INST:EQU	OPER:*                    -> *
 ADD:C208	CODE:1830    	ADDMODE:Inh	LABEL:                	INST:TSY	OPER:                     -> 
 ADD:C20A	CODE:18A6XX  	ADDMODE:Yin	LABEL:                	INST:LDAA	OPER:COLOR,y              -> COLOR,y
 ADD:C20D	CODE:CE2000  	ADDMODE:I16	LABEL:                	INST:LDX	OPER:#DISPLAY             -> #DISPLAY
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:clrscrnloop     	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:clrscrnloop     	INST:EQU	OPER:*                    -> *
 ADD:C210	CODE:A700    	ADDMODE:Xin	LABEL:                	INST:STAA	OPER:0,x                  -> 0,x
 ADD:C212	CODE:08      	ADDMODE:Inh	LABEL:                	INST:INX	OPER:                     -> 
 ADD:C213	CODE:8C6000  	ADDMODE:I16	LABEL:                	INST:CPX	OPER:#DISPEND             -> #DISPEND
 ADD:C216	CODE:26F8    	ADDMODE:Rel	LABEL:                	INST:BNE	OPER:clrscrnloop          -> (clrscrnloop)-(*+2)
 ADD:C218	CODE:39      	ADDMODE:Inh	LABEL:                	INST:RTS	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:point_drawer    	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:point_drawer    	INST:EQU	OPER:*                    -> *
 ADD:C219	CODE:3C      	ADDMODE:Inh	LABEL:                	INST:PSHX	OPER:                     -> 
 ADD:C21A	CODE:1830    	ADDMODE:Inh	LABEL:                	INST:TSY	OPER:                     -> 
 ADD:C21C	CODE:18E6XX  	ADDMODE:Yin	LABEL:                	INST:LDAB	OPER:YCOOR,y              -> YCOOR,y
@@ -454,28 +454,28 @@ ADD:C244	CODE:18E3XX  	ADDMODE:Yin	LABEL:                	INST:ADDD	OPER:TMPVAR,
 ADD:C247	CODE:8F      	ADDMODE:Inh	LABEL:                	INST:XGDX	OPER:                     -> 
 ADD:C248	CODE:18E6XX  	ADDMODE:Yin	LABEL:                	INST:LDAB	OPER:COLOR,y              -> COLOR,y
 ADD:C24B	CODE:E700    	ADDMODE:Xin	LABEL:                	INST:STAB	OPER:0,x                  -> 0,x
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:end_of_point_drawer	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:end_of_point_drawer	INST:EQU	OPER:*                    -> *
 ADD:C24D	CODE:38      	ADDMODE:Inh	LABEL:                	INST:PULX	OPER:                     -> 
 ADD:C24E	CODE:39      	ADDMODE:Inh	LABEL:                	INST:RTS	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:difference      	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:difference      	INST:EQU	OPER:*                    -> *
 ADD:C24F	CODE:1830    	ADDMODE:Inh	LABEL:                	INST:TSY	OPER:                     -> 
 ADD:C251	CODE:18A6XX  	ADDMODE:Yin	LABEL:                	INST:LDAA	OPER:MIN,y                -> MIN,y
 ADD:C254	CODE:18E6XX  	ADDMODE:Yin	LABEL:                	INST:LDAB	OPER:SUS,y                -> SUS,y
 ADD:C257	CODE:186FXX  	ADDMODE:Yin	LABEL:                	INST:CLR	OPER:SIGN,y               -> SIGN,y
 ADD:C25A	CODE:11      	ADDMODE:Inh	LABEL:                	INST:CBA	OPER:                     -> 
 ADD:C25B	CODE:2DXX    	ADDMODE:Rel	LABEL:                	INST:BLT	OPER:dif_is_neg           -> (dif_is_neg)-(*+2)
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:dif_is_plus     	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:dif_is_plus     	INST:EQU	OPER:*                    -> *
 ADD:C25D	CODE:10      	ADDMODE:Inh	LABEL:                	INST:SBA	OPER:                     -> 
 ADD:C25E	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:ANSWER,y             -> ANSWER,y
 ADD:C261	CODE:20XX    	ADDMODE:Rel	LABEL:                	INST:BRA	OPER:dif_done             -> (dif_done)-(*+2)
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:dif_is_neg      	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:dif_is_neg      	INST:EQU	OPER:*                    -> *
 ADD:C263	CODE:186CXX  	ADDMODE:Yin	LABEL:                	INST:INC	OPER:SIGN,y               -> SIGN,y
 ADD:C266	CODE:10      	ADDMODE:Inh	LABEL:                	INST:SBA	OPER:                     -> 
 ADD:C267	CODE:40      	ADDMODE:Inh	LABEL:                	INST:NEGA	OPER:                     -> 
 ADD:C268	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:ANSWER,y             -> ANSWER,y
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:dif_done        	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:dif_done        	INST:EQU	OPER:*                    -> *
 ADD:C26B	CODE:39      	ADDMODE:Inh	LABEL:                	INST:RTS	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:cos             	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:cos             	INST:EQU	OPER:*                    -> *
 ADD:C26C	CODE:1830    	ADDMODE:Inh	LABEL:                	INST:TSY	OPER:                     -> 
 ADD:C26E	CODE:18A6XX  	ADDMODE:Yin	LABEL:                	INST:LDAA	OPER:COEFF,y              -> COEFF,y
 ADD:C271	CODE:36      	ADDMODE:Inh	LABEL:                	INST:PSHA	OPER:                     -> 
@@ -487,7 +487,7 @@ ADD:C27B	CODE:32      	ADDMODE:Inh	LABEL:                	INST:PULA	OPER:       
 ADD:C27C	CODE:32      	ADDMODE:Inh	LABEL:                	INST:PULA	OPER:                     -> 
 ADD:C27D	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:ANSWER,y             -> ANSWER,y
 ADD:C280	CODE:39      	ADDMODE:Inh	LABEL:                	INST:RTS	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:sin             	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:sin             	INST:EQU	OPER:*                    -> *
 ADD:C281	CODE:36      	ADDMODE:Inh	LABEL:                	INST:PSHA	OPER:                     -> 
 ADD:C282	CODE:1830    	ADDMODE:Inh	LABEL:                	INST:TSY	OPER:                     -> 
 ADD:C284	CODE:186FXX  	ADDMODE:Yin	LABEL:                	INST:CLR	OPER:SIGN,y               -> SIGN,y
@@ -495,20 +495,20 @@ ADD:C287	CODE:186DXX  	ADDMODE:Yin	LABEL:                	INST:TST	OPER:COEFF,y 
 ADD:C28A	CODE:2AXX    	ADDMODE:Rel	LABEL:                	INST:BPL	OPER:coeff_ready          -> (coeff_ready)-(*+2)
 ADD:C28C	CODE:1860XX  	ADDMODE:Yin	LABEL:                	INST:NEG	OPER:COEFF,y              -> COEFF,y
 ADD:C28F	CODE:186CXX  	ADDMODE:Yin	LABEL:                	INST:INC	OPER:SIGN,y               -> SIGN,y
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:coeff_ready     	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:coeff_ready     	INST:EQU	OPER:*                    -> *
 ADD:C292	CODE:18A6XX  	ADDMODE:Yin	LABEL:                	INST:LDAA	OPER:ANGLE,y              -> ANGLE,y
 ADD:C295	CODE:8180    	ADDMODE:Imm	LABEL:                	INST:CMPA	OPER:#128                 -> #128
 ADD:C297	CODE:25XX    	ADDMODE:Rel	LABEL:                	INST:BLO	OPER:ang_lo_128           -> (ang_lo_128)-(*+2)
 ADD:C299	CODE:1860XX  	ADDMODE:Yin	LABEL:                	INST:NEG	OPER:ANGLE,y              -> ANGLE,y
 ADD:C29C	CODE:186CXX  	ADDMODE:Yin	LABEL:                	INST:INC	OPER:SIGN,y               -> SIGN,y
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:ang_lo_128      	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:ang_lo_128      	INST:EQU	OPER:*                    -> *
 ADD:C29F	CODE:18E6XX  	ADDMODE:Yin	LABEL:                	INST:LDAB	OPER:ANGLE,y              -> ANGLE,y
 ADD:C2A2	CODE:C140    	ADDMODE:Imm	LABEL:                	INST:CMPB	OPER:#64                  -> #64
 ADD:C2A4	CODE:25XX    	ADDMODE:Rel	LABEL:                	INST:BLO	OPER:ang_lo_64            -> (ang_lo_64)-(*+2)
 ADD:C2A6	CODE:8680    	ADDMODE:Imm	LABEL:                	INST:LDAA	OPER:#128                 -> #128
 ADD:C2A8	CODE:10      	ADDMODE:Inh	LABEL:                	INST:SBA	OPER:                     -> 
 ADD:C2A9	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:ANGLE,y              -> ANGLE,y
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:ang_lo_64       	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:ang_lo_64       	INST:EQU	OPER:*                    -> *
 ADD:C2AC	CODE:18E6XX  	ADDMODE:Yin	LABEL:                	INST:LDAB	OPER:ANGLE,y              -> ANGLE,y
 ADD:C2AF	CODE:C13E    	ADDMODE:Imm	LABEL:                	INST:CMPB	OPER:#62                  -> #62
 ADD:C2B1	CODE:24XX    	ADDMODE:Rel	LABEL:                	INST:BHS	OPER:sin_is_1             -> (sin_is_1)-(*+2)
@@ -519,14 +519,14 @@ ADD:C2B9	CODE:18E6XX  	ADDMODE:Yin	LABEL:                	INST:LDAB	OPER:COEFF,y
 ADD:C2BC	CODE:3D      	ADDMODE:Inh	LABEL:                	INST:MUL	OPER:                     -> 
 ADD:C2BD	CODE:18A7XX  	ADDMODE:Yin	LABEL:                	INST:STAA	OPER:ANSWER,y             -> ANSWER,y
 ADD:C2C0	CODE:20XX    	ADDMODE:Rel	LABEL:                	INST:BRA	OPER:cor_answer_sign      -> (cor_answer_sign)-(*+2)
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:sin_is_1        	INST:EQU	OPER:*                    -> *
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:cor_answer_sign 	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:sin_is_1        	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:cor_answer_sign 	INST:EQU	OPER:*                    -> *
 ADD:C2C2	CODE:181FXXXXXX	ADDMODE:YMR	LABEL:                	INST:BRCLR	OPER:SIGN,y,#1,sin_calculated -> SIGN,y,#1,(sin_calculated)-(*+5)
 ADD:C2C7	CODE:1860XX  	ADDMODE:Yin	LABEL:                	INST:NEG	OPER:ANSWER,y             -> ANSWER,y
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:sin_calculated  	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:sin_calculated  	INST:EQU	OPER:*                    -> *
 ADD:C2CA	CODE:32      	ADDMODE:Inh	LABEL:                	INST:PULA	OPER:                     -> 
 ADD:C2CB	CODE:39      	ADDMODE:Inh	LABEL:                	INST:RTS	OPER:                     -> 
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:init_config     	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:init_config     	INST:EQU	OPER:*                    -> *
 ADD:C2CC	CODE:36      	ADDMODE:Inh	LABEL:                	INST:PSHA	OPER:                     -> 
 ADD:C2CD	CODE:37      	ADDMODE:Inh	LABEL:                	INST:PSHB	OPER:                     -> 
 ADD:C2CE	CODE:8680    	ADDMODE:Imm	LABEL:                	INST:LDAA	OPER:#HEIGHT              -> #HEIGHT
@@ -546,15 +546,15 @@ ADD:C301	CODE:B5B9BEC2C6CACED1	ADDMODE:---	LABEL:                	INST:FCB	OPER:
 ADD:C309	CODE:D5D8DCDFE2E5E7EA	ADDMODE:---	LABEL:                	INST:FCB	OPER:213,216,220,223,226,229,231,234 -> 213,216,220,223,226,229,231,234
 ADD:C311	CODE:EDEFF1F3F5F7F8FA	ADDMODE:---	LABEL:                	INST:FCB	OPER:237,239,241,243,245,247,248,250 -> 237,239,241,243,245,247,248,250
 ADD:C319	CODE:FBFCFDFEFFFF0000	ADDMODE:---	LABEL:                	INST:FCB	OPER:251,252,253,254,255,255,0,0 -> 251,252,253,254,255,255,0,0
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:RMB	OPER:STKSIZE              -> STKSIZE
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:stk_in          	INST:EQU	OPER:*-1                  -> *-1
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:EDGES                -> EDGES
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:RMB	OPER:EDGNUM*EDGSIZE       -> EDGNUM*EDGSIZE
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:VERTEX               -> VERTEX
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:RMB	OPER:VTXNUM*VTXSIZE       -> VTXNUM*VTXSIZE
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:VERT_T               -> VERT_T
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:RMB	OPER:VTXNUM*VTXSIZE       -> VTXNUM*VTXSIZE
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:EDGES                -> EDGES
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:RMB	OPER:STKSIZE              -> STKSIZE
+ADD:0000	CODE:        	ADDMODE:---	LABEL:stk_in          	INST:EQU	OPER:*-1                  -> *-1
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:ORG	OPER:EDGES                -> EDGES
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:RMB	OPER:EDGNUM*EDGSIZE       -> EDGNUM*EDGSIZE
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:ORG	OPER:VERTEX               -> VERTEX
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:RMB	OPER:VTXNUM*VTXSIZE       -> VTXNUM*VTXSIZE
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:ORG	OPER:VERT_T               -> VERT_T
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:RMB	OPER:VTXNUM*VTXSIZE       -> VTXNUM*VTXSIZE
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:ORG	OPER:EDGES                -> EDGES
 ADD:E000	CODE:XXXXXXXX	ADDMODE:---	LABEL:                	INST:FCB	OPER:0,1,COLOR,0          -> 0,1,COLOR,0
 ADD:E004	CODE:XXXXXXXX	ADDMODE:---	LABEL:                	INST:FCB	OPER:1,2,COLOR,0          -> 1,2,COLOR,0
 ADD:E008	CODE:XXXXXXXX	ADDMODE:---	LABEL:                	INST:FCB	OPER:2,3,COLOR,0          -> 2,3,COLOR,0
@@ -591,8 +591,8 @@ ADD:E080	CODE:XXXXXXXX	ADDMODE:---	LABEL:                	INST:FCB	OPER:6,5+8,CO
 ADD:E084	CODE:XXXXXXXX	ADDMODE:---	LABEL:                	INST:FCB	OPER:6,5+14,COLOR,0       -> 6,5+14,COLOR,0
 ADD:E088	CODE:XXXXXXXX	ADDMODE:---	LABEL:                	INST:FCB	OPER:7,5+8,COLOR,0        -> 7,5+8,COLOR,0
 ADD:E08C	CODE:XXXXXXXX	ADDMODE:---	LABEL:                	INST:FCB	OPER:7,5+14,COLOR,0       -> 7,5+14,COLOR,0
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:EDGES_END       	INST:EQU	OPER:*                    -> *
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:VERTEX               -> VERTEX
+ADD:0000	CODE:        	ADDMODE:---	LABEL:EDGES_END       	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:ORG	OPER:VERTEX               -> VERTEX
 ADD:E800	CODE:00200000	ADDMODE:---	LABEL:                	INST:FCB	OPER:0,-32,0,0            -> 0,-32,0,0
 ADD:E804	CODE:20300000	ADDMODE:---	LABEL:                	INST:FCB	OPER:32,-48,0,0           -> 32,-48,0,0
 ADD:E808	CODE:40180000	ADDMODE:---	LABEL:                	INST:FCB	OPER:64,-24,0,0           -> 64,-24,0,0
@@ -613,9 +613,9 @@ ADD:E840	CODE:20102000	ADDMODE:---	LABEL:                	INST:FCB	OPER:32,16,-3
 ADD:E844	CODE:00202000	ADDMODE:---	LABEL:                	INST:FCB	OPER:0,32,-32,0           -> 0,32,-32,0
 ADD:E848	CODE:20102000	ADDMODE:---	LABEL:                	INST:FCB	OPER:-32,16,-32,0         -> -32,16,-32,0
 ADD:E84C	CODE:20102000	ADDMODE:---	LABEL:                	INST:FCB	OPER:-32,-16,-32,0        -> -32,-16,-32,0
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:VERTEX_END      	INST:EQU	OPER:*                    -> *
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:VERT_T_END      	INST:EQU	OPER:VERT_T+(VERTEX_END-VERTEX) -> VERT_T+(VERTEX_END-VERTEX)
-ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:META                 -> META
+ADD:0000	CODE:        	ADDMODE:---	LABEL:VERTEX_END      	INST:EQU	OPER:*                    -> *
+ADD:0000	CODE:        	ADDMODE:---	LABEL:VERT_T_END      	INST:EQU	OPER:VERT_T+(VERTEX_END-VERTEX) -> VERT_T+(VERTEX_END-VERTEX)
+ADD:0000	CODE:        	ADDMODE:---	LABEL:                	INST:ORG	OPER:META                 -> META
 ADD:F000	CODE:E090    	ADDMODE:---	LABEL:edges_end       	INST:FDB	OPER:EDGES_END            -> EDGES_END
 ADD:F002	CODE:E850    	ADDMODE:---	LABEL:vertex_end      	INST:FDB	OPER:VERTEX_END           -> VERTEX_END
 ADD:F004	CODE:EC50    	ADDMODE:---	LABEL:vert_t_end      	INST:FDB	OPER:VERT_T_END           -> VERT_T_END

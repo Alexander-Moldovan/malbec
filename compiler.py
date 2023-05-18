@@ -91,8 +91,7 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
                 check_function = operand.operand_is_single_variable
                 get_function = operand.get_operand_single_variable
             else:
-                error = True
-                break
+                continue   # p68h11 or END
 
             error = not check_function()
             if error:
@@ -303,6 +302,9 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
             print(f'ERROR: invalid instruction {instruction}')
             error = True
             break
+    
+    if error:
+        print('ERROR IN COMPILE-TIME')
 
     return variable_list if not error else {}, error
         
