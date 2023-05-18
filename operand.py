@@ -56,16 +56,16 @@ class Operand(object): # Made of expressions, separated by commas
                     break
         return evaluated,error # evaluated only true if all evaluable expressions are evaluated
     
-    def get_32bit_operand(self) -> list[int32,bool,bool]:
-        error = False
-        operands = 0
+    # def get_32bit_operand(self) -> list[int32,bool,bool]:
+    #     error = False
+    #     operands = 0
 
-        evaluated = not self.needs_evaluation()
-        if self.own_addmode == EXT:
-            operands = self.expressions[0].get_value()
-        else:
-            error = True
-        return operands,evaluated,error
+    #     evaluated = not self.needs_evaluation()
+    #     if self.own_addmode == EXT:
+    #         operands = self.expressions[0].get_value()
+    #     else:
+    #         error = True
+    #     return operands,evaluated,error
 
     # TODO: resolver tema de REL, porq no evalua expresion tal, sino la resta!!!
     # (incluye los DIR_MSK_REL, INDX_MSK_REL y INDY_MSK_REL)
@@ -135,6 +135,22 @@ class Operand(object): # Made of expressions, separated by commas
         return operands,evaluated,error
 
 
+############## ORG / EQU / RMB ###########################
+    def operand_is_single_variable(self) -> bool:
+        return self.check_addressing_mode(EXT)
+
+    def get_operand_single_variable(self, none = None) -> list[int32,bool,bool]:
+        error = False
+        operands = 0
+
+        evaluated = not self.needs_evaluation()
+        if self.own_addmode == EXT:
+            operands = self.expressions[0].get_value()
+        else:
+            error = True
+        return operands,evaluated,error
+
+
 ############## FCB / FDB ###########################
 
     def operand_is_array_of_regular(self) -> bool:
@@ -146,12 +162,14 @@ class Operand(object): # Made of expressions, separated by commas
                 answer = False
                 break
         return answer
-    def get_operand_array_of_regular(self,expression_min,expression_max,expression_size_in_bytes) -> list[str,bool,bool]:
+    def get_operand_array_of_regular(self, min_max_size: list[int]) -> list[str,bool,bool]:
         error = False
         operands = ''
 
+        expression_min,expression_max,expression_size_in_bytes = min_max_size
+
         evaluated = not self.needs_evaluation()
-        if self.check_only_regular_expressions():
+        if self.operand_is_array_of_regular():
             for expression in self.expressions:
                 value = expression.get_value()
                 if expression_min <= value <= expression_max:
@@ -199,9 +217,9 @@ class Operand(object): # Made of expressions, separated by commas
 
     def operand_is_single_string(self) -> bool:
         return len(self.expressions) == 1 and self.expressions[0].is_single_string()
-    def get_operand_single_string(self) -> list[str,bool,bool]:
+    def get_operand_single_string(self, none = None) -> list[str,bool,bool]:
         evaluated = not self.needs_evaluation()
-        if self.check_single_string():
+        if self.operand_is_single_string():
             operands,error = self.expressions[0].get_string()
             evaluated = True # TODO: modificarlo
         else:

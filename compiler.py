@@ -1,6 +1,6 @@
 from textfile import TextFile
 from instruction import INSTRUCTION_SET
-from directive import DIRECTIVE_SET
+from directive import DIRECTIVE_SET, OPERAND_IS_SINGLE_VARIABLE, OPERAND_IS_ARRAY_OF_REGULAR, OPERAND_IS_SINGLE_STRING
 from processedline import ProcessedLine
 from numpy import int32,int16,int8
 
@@ -73,128 +73,187 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
             variable_list[label] = int32(last_org + offset_from_org)   
 
         if instruction in DIRECTIVE_SET:
-            if instruction.upper() == 'ORG':
-                if operand.check_addressing_mode(EXT):
-                    processed_line.addmode = EXT
-                    evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
-                    if error:   break
-                    if evaluated:
-                        ops,evaluated,error = operand.get_32bit_operand()
-                        if not evaluated or error:
-                            error = True
-                            break
-                        last_org = ops
-                        if label != None:
-                            variable_list[label] = ops
-                    else:
-                        last_org = None
-                else:
+            directive = DIRECTIVE_SET[instruction]
+            if directive.label_required and label == None:
+                error = True
+                break
+            
+            processed_line.code = ''
+            processed_line.address = None if (last_org == None or not directive.generates_code) else last_org + offset_from_org
+
+            if directive.operand_type == OPERAND_IS_ARRAY_OF_REGULAR:
+                check_function = operand.operand_is_array_of_regular
+                get_function = operand.get_operand_array_of_regular
+            elif directive.operand_type == OPERAND_IS_SINGLE_STRING:
+                check_function = operand.operand_is_single_string
+                get_function = operand.get_operand_single_string
+            elif directive.operand_type == OPERAND_IS_SINGLE_VARIABLE:
+                check_function = operand.operand_is_single_variable
+                get_function = operand.get_operand_single_variable
+            else:
+                error = True
+                break
+
+            error = not check_function()
+            if error:
+                break
+
+            evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
+            if error:
+                break
+
+            if evaluated:
+                ops,evaluated,error = get_function([directive.operand_min,directive.operand_max,directive.operand_size_in_bytes])
+                if not evaluated or error:
                     error = True
                     break
+                if directive.generates_code:
+                    processed_line.code += ops
+                if directive == DIRECTIVE_SET['ORG']:
+                    last_org = ops
+                if directive == DIRECTIVE_SET['EQU'] or (directive == DIRECTIVE_SET['ORG'] and label != None):
+                    variable_list[label] = ops
+                if directive == DIRECTIVE_SET['RMB']:
+                    last_org = None if last_org == None else int32(last_org + offset_from_org + ops)
+                
+            else:
+                if directive.reset_offset:
+                    last_org = None
+                elif directive == DIRECTIVE_SET['FCB'] or directive == DIRECTIVE_SET['FDB']:
+                    processed_line.code += 'XX'*(operand.get_ammount_of_expressions()*directive.operand_size_in_bytes)
+                elif directive == DIRECTIVE_SET['FCC']:
+                    error = True
+                    break
+
+            if directive.reset_offset:
                 offset_from_org = int32(0)
-            elif instruction.upper() == 'EQU':
-                if label == None:
-                    error = True
-                    break
-                if operand.check_addressing_mode(EXT):
-                    processed_line.addmode = EXT
-                    evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
-                    if error:   break
-                    if evaluated:
-                        ops,evaluated,error = operand.get_32bit_operand()
-                        if not evaluated or error:
-                            error = True
-                            break
-                        variable_list[label] = ops
-                    else:
-                        pass # Do nothing
-                else:
-                    error = True
-                    break
-            elif instruction.upper() == 'P68H11': # TODO: hacer?
-                pass
-            elif instruction.upper() == 'END':  # TODO: hacer
-                pass
-            elif instruction.upper() == 'RMB':
-                if operand.check_addressing_mode(EXT):
-                    processed_line.addmode = EXT
-                    evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
-                    if error:   break
-                    if evaluated:
-                        ops,evaluated,error = operand.get_32bit_operand()
-                        if not evaluated or error:
-                            error = True
-                            break
-                        if last_org != None:
-                            last_org = int32(last_org + offset_from_org + ops)
-                        else:
-                            last_org = None  # Redundante, pero por claridad
-                    else:
-                        last_org = None
-                else:
-                    error = True
-                    break
-                offset_from_org = int32(0)
-            elif instruction.upper() == 'FCB':
-                if operand.operand_is_array_of_regular():
-                    processed_line.code = ''
-                    processed_line.address = None if last_org == None else last_org + offset_from_org
+            offset_from_org += int32(len(processed_line.code)//2) # TODO: Checkear que no sea impar!!!
+            
 
-                    evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
-                    if error:   break
-                    if evaluated:
-                        exp,evaluated,error = operand.get_operand_array_of_regular(int32(-128),int32(255),1)
-                        if not evaluated or error:
-                            error = True
-                            break
-                        processed_line.code += exp
-                    else:
-                        processed_line.code += 'XX'*operand.get_ammount_of_expressions()
 
-                    offset_from_org += int32((operand.get_ammount_of_expressions()) & int32(-1))
 
-                else:
-                    error = True
-                    break
+            # if instruction.upper() == 'ORG':
+            #     if operand.operand_is_single_variable():
+            #         processed_line.addmode = EXT
+            #         evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
+            #         if error:   break
+            #         if evaluated:
+            #             ops,evaluated,error = operand.get_operand_single_variable()
+            #             if not evaluated or error:
+            #                 error = True
+            #                 break
+            #             last_org = ops
+            #             if label != None:
+            #                 variable_list[label] = ops
+            #         else:
+            #             last_org = None
+            #     else:
+            #         error = True
+            #         break
+            #     offset_from_org = int32(0)
+            # elif instruction.upper() == 'EQU':
+            #     if label == None:
+            #         error = True
+            #         break
+            #     if operand.operand_is_single_variable():
+            #         processed_line.addmode = EXT
+            #         evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
+            #         if error:   break
+            #         if evaluated:
+            #             ops,evaluated,error = operand.get_operand_single_variable()
+            #             if not evaluated or error:
+            #                 error = True
+            #                 break
+            #             variable_list[label] = ops
+            #         else:
+            #             pass # Do nothing
+            #     else:
+            #         error = True
+            #         break
+            # elif instruction.upper() == 'P68H11': # TODO: hacer?
+            #     pass
+            # elif instruction.upper() == 'END':  # TODO: hacer
+            #     pass
+            # elif instruction.upper() == 'RMB':
+            #     if operand.operand_is_single_variable():
+            #         processed_line.addmode = EXT
+            #         evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
+            #         if error:   break
+            #         if evaluated:
+            #             ops,evaluated,error = operand.get_operand_single_variable()
+            #             if not evaluated or error:
+            #                 error = True
+            #                 break
+            #             if last_org != None:
+            #                 last_org = int32(last_org + offset_from_org + ops)
+            #             else:
+            #                 last_org = None  # Redundante, pero por claridad
+            #         else:
+            #             last_org = None
+            #     else:
+            #         error = True
+            #         break
+            #     offset_from_org = int32(0)
+            # elif instruction.upper() == 'FCB':
+            #     if operand.operand_is_array_of_regular():
+            #         processed_line.code = ''
+            #         processed_line.address = None if last_org == None else last_org + offset_from_org
 
-            elif instruction.upper() == 'FDB':
-                if operand.operand_is_array_of_regular():
-                    processed_line.code = ''
-                    processed_line.address = None if last_org == None else last_org + offset_from_org
+            #         evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
+            #         if error:   break
+            #         if evaluated:
+            #             exp,evaluated,error = operand.get_operand_array_of_regular(int32(-128),int32(255),1)
+            #             if not evaluated or error:
+            #                 error = True
+            #                 break
+            #             processed_line.code += exp
+            #         else:
+            #             processed_line.code += 'XX'*operand.get_ammount_of_expressions()
 
-                    evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
-                    if error:   break
-                    if evaluated:
-                        exp,evaluated,error = operand.get_operand_array_of_regular(int32(-32768),int32(65535),2)
-                        if not evaluated or error:
-                            error = True
-                            break
-                        processed_line.code += exp
-                    else:
-                        processed_line.code += 'XX'*(2*operand.get_ammount_of_expressions())
+            #         offset_from_org += int32((operand.get_ammount_of_expressions()) & int32(-1))
 
-                    offset_from_org += int32((operand.get_ammount_of_expressions()*2) & int32(-1))
+            #     else:
+            #         error = True
+            #         break
 
-                else:
-                    error = True
-                    break
+            # elif instruction.upper() == 'FDB':
+            #     if operand.operand_is_array_of_regular():
+            #         processed_line.code = ''
+            #         processed_line.address = None if last_org == None else last_org + offset_from_org
 
-            elif instruction.upper() == 'FCC':
-                if operand.operand_is_single_string():
-                    processed_line.code = ''
-                    processed_line.address = None if last_org == None else last_org + offset_from_org
+            #         evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
+            #         if error:   break
+            #         if evaluated:
+            #             exp,evaluated,error = operand.get_operand_array_of_regular(int32(-32768),int32(65535),2)
+            #             if not evaluated or error:
+            #                 error = True
+            #                 break
+            #             processed_line.code += exp
+            #         else:
+            #             processed_line.code += 'XX'*(2*operand.get_ammount_of_expressions())
 
-                    string,evaluated,error = operand.get_operand_single_string()
-                    if not evaluated or error:
-                        error = True
-                        break
-                    processed_line.code += string
+            #         offset_from_org += int32((operand.get_ammount_of_expressions()*2) & int32(-1))
+
+            #     else:
+            #         error = True
+            #         break
+
+            # elif instruction.upper() == 'FCC':
+            #     if operand.operand_is_single_string():
+            #         processed_line.code = ''
+            #         processed_line.address = None if last_org == None else last_org + offset_from_org
+
+            #         string,evaluated,error = operand.get_operand_single_string()
+            #         if not evaluated or error:
+            #             error = True
+            #             break
+            #         processed_line.code += string
                     
-                else:
-                    error = True
-                    break
+            #     else:
+            #         error = True
+            #         break
 
-                offset_from_org += int32(len(processed_line.code)//2)
+            #     offset_from_org += int32(len(processed_line.code)//2)
 
 
         elif instruction in INSTRUCTION_SET: 
