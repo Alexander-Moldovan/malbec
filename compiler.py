@@ -136,14 +136,14 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
                     break
                 offset_from_org = int32(0)
             elif instruction.upper() == 'FCB':
-                if operand.check_only_regular_expressions():
+                if operand.operand_is_array_of_regular():
                     processed_line.code = ''
                     processed_line.address = None if last_org == None else last_org + offset_from_org
 
                     evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
                     if error:   break
                     if evaluated:
-                        exp,evaluated,error = operand.get_regular_expressions(int32(-128),int32(255),1)
+                        exp,evaluated,error = operand.get_operand_array_of_regular(int32(-128),int32(255),1)
                         if not evaluated or error:
                             error = True
                             break
@@ -158,14 +158,14 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
                     break
 
             elif instruction.upper() == 'FDB':
-                if operand.check_only_regular_expressions():
+                if operand.operand_is_array_of_regular():
                     processed_line.code = ''
                     processed_line.address = None if last_org == None else last_org + offset_from_org
 
                     evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
                     if error:   break
                     if evaluated:
-                        exp,evaluated,error = operand.get_regular_expressions(int32(-32768),int32(65535),2)
+                        exp,evaluated,error = operand.get_operand_array_of_regular(int32(-32768),int32(65535),2)
                         if not evaluated or error:
                             error = True
                             break
@@ -180,18 +180,21 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
                     break
 
             elif instruction.upper() == 'FCC':
-                if operand.check_single_string():
+                if operand.operand_is_single_string():
                     processed_line.code = ''
                     processed_line.address = None if last_org == None else last_org + offset_from_org
 
-                    string,error = operand.get_single_string()
-                    if error:
+                    string,evaluated,error = operand.get_operand_single_string()
+                    if not evaluated or error:
+                        error = True
                         break
                     processed_line.code += string
                     
                 else:
                     error = True
                     break
+
+                offset_from_org += int32(len(processed_line.code)//2)
 
 
         elif instruction in INSTRUCTION_SET: 

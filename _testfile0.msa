@@ -3,6 +3,10 @@
 * Cosas para testear:
 
 	ORG	$2000
+	FCC	'hola_a'
+	FCC	'todos'
+
+	ORG	$2000
 
 	inc	$10
 	ldaa	$10

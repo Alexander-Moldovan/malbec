@@ -86,6 +86,9 @@ ERROR = False
  
 ADD:0000	CODE:        	ADDMODE:Inh	LABEL:                	INST:P68H11	OPER:                     -> 
 ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:$2000                -> $2000
+ADD:2000	CODE:686F6C615F61	ADDMODE:Ext	LABEL:                	INST:FCC	OPER:'hola_a'             -> 'hola_a'
+ADD:2000	CODE:746F646F73	ADDMODE:Ext	LABEL:                	INST:FCC	OPER:'todos'              -> 'todos'
+ADD:0000	CODE:        	ADDMODE:Ext	LABEL:                	INST:ORG	OPER:$2000                -> $2000
 ADD:2000	CODE:7C0010  	ADDMODE:Ext	LABEL:                	INST:INC	OPER:$10                  -> $10
 ADD:2003	CODE:9610    	ADDMODE:Dir	LABEL:                	INST:LDAA	OPER:$10                  -> $10
 ADD:2005	CODE:B60100  	ADDMODE:Ext	LABEL:                	INST:LDAA	OPER:$100                 -> $100

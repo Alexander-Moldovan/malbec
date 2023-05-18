@@ -56,24 +56,6 @@ class Operand(object): # Made of expressions, separated by commas
                     break
         return evaluated,error # evaluated only true if all evaluable expressions are evaluated
     
-    def get_regular_expressions(self,expression_min,expression_max,expression_size_in_bytes) -> list[str,bool,bool]:
-        error = False
-        operands = ''
-
-        evaluated = not self.needs_evaluation()
-        if self.check_only_regular_expressions():
-            for expression in self.expressions:
-                value = expression.get_value()
-                if expression_min <= value <= expression_max:
-                    operands += f'{value :08X}'[-(2*expression_size_in_bytes):]
-                else:
-                    error = True
-                    break
-        else:
-            error = True
-
-        return operands,evaluated,error
-
     def get_32bit_operand(self) -> list[int32,bool,bool]:
         error = False
         operands = 0
@@ -152,7 +134,10 @@ class Operand(object): # Made of expressions, separated by commas
 
         return operands,evaluated,error
 
-    def check_only_regular_expressions(self):
+
+############## FCB / FDB ###########################
+
+    def operand_is_array_of_regular(self) -> bool:
         if len(self.expressions) == 0:
             return False
         answer = True
@@ -161,21 +146,82 @@ class Operand(object): # Made of expressions, separated by commas
                 answer = False
                 break
         return answer
-    
-    # TODO: CORREGIR: problemas con , o ESPACIOS en strings
-    def check_single_string(self):
-        return len(self.expressions) == 1 and self.expressions[0].is_single_string()
+    def get_operand_array_of_regular(self,expression_min,expression_max,expression_size_in_bytes) -> list[str,bool,bool]:
+        error = False
+        operands = ''
 
-    def get_single_string(self) -> list[str,bool]:
-        if self.check_single_string():
-            operands,error = self.expressions[0].get_string()
+        evaluated = not self.needs_evaluation()
+        if self.check_only_regular_expressions():
+            for expression in self.expressions:
+                value = expression.get_value()
+                if expression_min <= value <= expression_max:
+                    operands += f'{value :08X}'[-(2*expression_size_in_bytes):]
+                else:
+                    error = True
+                    break
         else:
-            operands = ''
             error = True
-        return operands,error # No 'evaluated' variable since a string is always 'evaluated'
+        return operands,evaluated,error            
+
+    # def check_only_regular_expressions(self):
+    #     if len(self.expressions) == 0:
+    #         return False
+    #     answer = True
+    #     for expression in self.expressions:
+    #         if not expression.is_regular_expression():
+    #             answer = False
+    #             break
+    #     return answer
+    # def get_regular_expressions(self,expression_min,expression_max,expression_size_in_bytes) -> list[str,bool,bool]:
+    #     error = False
+    #     operands = ''
+
+    #     evaluated = not self.needs_evaluation()
+    #     if self.check_only_regular_expressions():
+    #         for expression in self.expressions:
+    #             value = expression.get_value()
+    #             if expression_min <= value <= expression_max:
+    #                 operands += f'{value :08X}'[-(2*expression_size_in_bytes):]
+    #             else:
+    #                 error = True
+    #                 break
+    #     else:
+    #         error = True
+
+    #     return operands,evaluated,error    
 
     def get_ammount_of_expressions(self):
         return len(self.expressions)
+
+
+############## FCC ###########################
+    # TODO: CORREGIR: problemas con , o ESPACIOS en strings
+
+    def operand_is_single_string(self) -> bool:
+        return len(self.expressions) == 1 and self.expressions[0].is_single_string()
+    def get_operand_single_string(self) -> list[str,bool,bool]:
+        evaluated = not self.needs_evaluation()
+        if self.check_single_string():
+            operands,error = self.expressions[0].get_string()
+            evaluated = True # TODO: modificarlo
+        else:
+            operands = ''
+            error = True
+        return operands,evaluated,error
+
+    # def check_single_string(self):
+    #     return len(self.expressions) == 1 and self.expressions[0].is_single_string()
+    # def get_single_string(self) -> list[str,bool]:
+    #     if self.check_single_string():
+    #         operands,error = self.expressions[0].get_string()
+    #     else:
+    #         operands = ''
+    #         error = True
+    #     return operands,error # No 'evaluated' variable since a string is always 'evaluated'
+
+
+#############################################
+
     
     def is_value_direct(self) -> bool:
         if self.own_addmode == EXT:
