@@ -29,13 +29,13 @@ class Directive(object):
     def expects_operands(self) -> bool:
         return self.requires_operand
 
-DIRECTIVE_SET = {
+DIRECTIVE_SET = {    #   name     req_oper  lab_req gen_code rstoff operand_type                op_min          op_max      op_size
     'P68H11': Directive('p68h11', False,    False,  False,   False, NO_OPERAND_EXPECTED),
-    'END' : Directive('END', False,         False,  False,   False, NO_OPERAND_EXPECTED),
-    'EQU' : Directive('EQU', True,          True,   False,   False, OPERAND_IS_SINGLE_VARIABLE),
-    'ORG' : Directive('ORG', True,          False,  False,   True,  OPERAND_IS_SINGLE_VARIABLE),
-    'RMB' : Directive('RMB', True,          False,  False,   True,  OPERAND_IS_SINGLE_VARIABLE),
-    'FCB' : Directive('FCB', True,          False,  True,    False, OPERAND_IS_ARRAY_OF_REGULAR, int32(-128),  int32(255),  1),
-    'FDB' : Directive('FDB', True,          False,  True,    False, OPERAND_IS_ARRAY_OF_REGULAR, int32(-32768),int32(65535),2),
-    'FCC' : Directive('FCC', True,          False,  True,    False, OPERAND_IS_SINGLE_STRING)
+    'END' :   Directive('END',    False,    False,  False,   False, NO_OPERAND_EXPECTED),
+    'EQU' :   Directive('EQU',    True,     True,   False,   False, OPERAND_IS_SINGLE_VARIABLE),
+    'ORG' :   Directive('ORG',    True,     False,  False,   True,  OPERAND_IS_SINGLE_VARIABLE),
+    'RMB' :   Directive('RMB',    True,     False,  False,   True,  OPERAND_IS_SINGLE_VARIABLE),
+    'FCB' :   Directive('FCB',    True,     False,  True,    False, OPERAND_IS_ARRAY_OF_REGULAR, int32(-128),  int32(255),  1),
+    'FDB' :   Directive('FDB',    True,     False,  True,    False, OPERAND_IS_ARRAY_OF_REGULAR, int32(-32768),int32(65535),2),
+    'FCC' :   Directive('FCC',    True,     False,  True,    False, OPERAND_IS_SINGLE_STRING)
 }

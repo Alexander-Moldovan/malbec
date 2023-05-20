@@ -1,12 +1,12 @@
 #from compiler import Compiler
-from compiler import precompile, compile
+from compiler import precompile, compile,check_evaluation
 from textfile import TextFile
 from numpy import uint32
 
 #c = Compiler()
-tf = TextFile('_testfile0.msa')
+tf = TextFile('_testfile1.msa')
 
-with open('output.txt','w') as out:
+with open('output1.txt','w') as out:
 #    out.write(f'{c.precompile(tf)}')
     precompiled = precompile(tf)
     varlist,error = compile(precompiled)
@@ -17,3 +17,5 @@ with open('output.txt','w') as out:
     out.write('\n')
     for line in precompiled:
         out.write(f'{line}\n')
+    evaluated = check_evaluation(precompiled)
+    print(f'EVALUATED = {evaluated}')

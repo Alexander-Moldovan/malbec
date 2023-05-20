@@ -54,7 +54,7 @@ def evaluate_expression(tokens : list[str,CompilerOperator], plc: int, variable_
                 string = token[1:-1]
                 string = string.replace('\'\'','\'')
                 for c in string:
-                    variable = (variable<<8) + (ord(c) & 0xff)
+                    variable = ((variable<<8) + (ord(c) & 0xff)) & 0xffffffff
             elif token[0].isnumeric():
                 if   token[-2:].upper() == '.H':
                     try:
@@ -114,7 +114,7 @@ def evaluate_expression(tokens : list[str,CompilerOperator], plc: int, variable_
                 evaluated = False
                 break                
         
-            variable = int32(int32(0) | variable)
+            variable = int32(int32(-1) & variable)
             stack.append(variable)
         else:
             print(f'ERROR: unknown token: {token} of type {type(token)}')

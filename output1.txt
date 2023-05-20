@@ -1,0 +1,19 @@
+FIRST COMPILATION
+ERROR = False
+            cantidad = 00000005 = 5
+                  tag = 00002000 = 8192
+                  fin = 00002004 = 8196
+ 
+ADD:----	CODE:        	ADDMODE:---	LABEL:                	INST:P68H11	OPER:                     -> 
+ADD:----	CODE:        	ADDMODE:---	LABEL:cantidad        	INST:EQU	OPER:5                    -> 5
+ADD:----	CODE:        	ADDMODE:---	LABEL:                	INST:ORG	OPER:$2000                -> $2000
+ADD:----	CODE:        	ADDMODE:---	LABEL:tag             	INST:None	OPER:                     -> 
+ADD:2000	CODE:8605    	ADDMODE:Imm	LABEL:                	INST:LDAA	OPER:#5                   -> #5
+ADD:2002	CODE:A700    	ADDMODE:Xin	LABEL:                	INST:STAA	OPER:0,x                  -> 0,x
+ADD:2004	CODE:20FE    	ADDMODE:Rel	LABEL:fin             	INST:BRA	OPER:fin                  -> (fin)-(*+2)
+ADD:2006	CODE:4C      	ADDMODE:Inh	LABEL:                	INST:INCA	OPER:                     -> 
+ADD:----	CODE:        	ADDMODE:---	LABEL:                	INST:RMB	OPER:cantidad             -> cantidad
+ADD:200C	CODE:000100020003	ADDMODE:---	LABEL:                	INST:FDB	OPER:1,2,3                -> 1,2,3
+ADD:2012	CODE:040506  	ADDMODE:---	LABEL:                	INST:FCB	OPER:4,5,6                -> 4,5,6
+ADD:2015	CODE:686F6C615F615F746F646F73	ADDMODE:---	LABEL:                	INST:FCC	OPER:'hola_a_todos'       -> 'hola_a_todos'
+ADD:----	CODE:        	ADDMODE:---	LABEL:                	INST:END	OPER:                     -> 

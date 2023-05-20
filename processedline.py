@@ -25,4 +25,5 @@ class ProcessedLine(object):
         self.operand = Operand(operand,relative)
 
     def __repr__(self): #TODO: cambiar el modo de acceder al addmode
-        return f'ADD:{(uint16(self.address) if self.address != None else int16(0)) :04X}\tCODE:{self.code : <8}\tADDMODE:{"---" if self.addmode == UNDEFINED_ADDRESSING_MODE else self.addmode}\tLABEL:{self.label if self.label!=None else " " :<16}\tINST:{self.instruction}\tOPER:{self.operand}'
+        address = f'{uint16(self.address):04X}' if self.address != None else "----"
+        return f'ADD:{address}\tCODE:{self.code : <8}\tADDMODE:{"---" if self.addmode == UNDEFINED_ADDRESSING_MODE else self.addmode}\tLABEL:{self.label if self.label!=None else " " :<16}\tINST:{self.instruction}\tOPER:{self.operand}'
