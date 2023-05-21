@@ -2,7 +2,8 @@ from textfile import TextFile
 from instruction import INSTRUCTION_SET
 from directive import DIRECTIVE_SET, OPERAND_IS_SINGLE_VARIABLE, OPERAND_IS_ARRAY_OF_REGULAR, OPERAND_IS_SINGLE_STRING
 from processedline import ProcessedLine
-from numpy import int32,int16,int8
+from numpy import int32,int16,int8, uint16, uint8
+from numpy import ceil
 
 from addressingmodes import *
 
@@ -67,7 +68,7 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
         instruction = processed_line.instruction
         operand = processed_line.operand
 
-        if label != None and (instruction == None or (instruction.upper != 'EQU' and instruction.upper != 'ORG')) and last_org != None:
+        if label != None and (instruction == None or (instruction != 'EQU' and instruction != 'ORG')) and last_org != None:
             variable_list[label] = int32(last_org + offset_from_org)   
 
         if instruction in DIRECTIVE_SET:
@@ -197,7 +198,7 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
             instruction = processed_line.instruction
             operand = processed_line.operand
 
-            if label != None and (instruction == None or (instruction.upper != 'EQU' and instruction.upper != 'ORG')) and last_org != None:
+            if label != None and (instruction == None or (instruction != 'EQU' and instruction != 'ORG')) and last_org != None:
                 if not label in variable_list:
                     variable_list[label] = int32(last_org + offset_from_org)
                 else:
@@ -322,8 +323,81 @@ def check_evaluation(compiled : list[ProcessedLine]) -> bool:
             break
         inst = processed_line.instruction
         if (inst in INSTRUCTION_SET or (inst in DIRECTIVE_SET and DIRECTIVE_SET[inst].generates_code)) and \
-            (processed_line.addmode == None or 'X' in processed_line.code):
+            (processed_line.address == None or 'X' in processed_line.code):
             evaluated = False
             break
 
     return evaluated
+
+def processed_lines_to_blocks_of_data(compiled : list[ProcessedLine]) -> list[list[list[uint16,str]],bool]:
+    error = False
+    data = []
+
+    if check_evaluation(compiled):
+        plc = uint16(0)
+        current_string = [uint16(0),[]]
+        data.append(current_string)
+        for processed_line in compiled:
+            instruction = processed_line.instruction
+            code = processed_line.code
+            operand = processed_line.operand
+            if instruction == 'ORG' or instruction == 'RMB':
+                ops,evaluated,error = operand.get_operand_single_variable()
+                if not evaluated or error:
+                    error = True
+                    break
+                plc = uint16(ops & uint16(-1)) if instruction == 'ORG' else uint16((plc+ops) & uint16(-1))
+                current_string = [plc,[]]
+                data.append(current_string)
+            current_string[1].append(code)
+            plc = uint16((plc + (len(code)//2)) & uint16(-1))
+    else:
+        error = True
+    
+    return data if not error else [], error
+
+def checksum(string: str) -> str:
+    sum = uint8(0)
+    for i in range(len(string) // 2):
+        byte = string[2*i:2*(i+1)]
+        sum += uint8(int(byte,16))
+    
+    return f'{uint8(sum ^ uint8(-1)):02X}'[-2:]
+
+def blocks_of_data_to_s19(data: list[list[uint16,str]], filename = '', bytes_per_line = 32) -> list[list[str],bool]:
+    error = False
+    output = []
+
+    header = f'{filename} by Malbec'[0:32]
+    first_line = 'S0'
+    first_line += f'{len(header)+3 :02X}'[-2:]
+    first_line += '0000'
+    for c in header:
+        first_line += f'{ord(c) :02X}'[-2:]
+    first_line += checksum(first_line[2:])
+    output.append(first_line)
+
+    for block in data:
+        plc = uint16(block[0])
+        remaining = ''.joint(block[1])
+        if remaining == '':
+            continue
+        for line in range(ceil(len(remaining)/ bytes_per_line)):
+            record = 'S1'
+            address = f'{plc:04X}'[-4:]
+            code = remaining[:(2*bytes_per_line)]
+            byte_count = f'{(len(code)//2)+3}'[-2:]
+            sum = checksum(byte_count+address+code)
+
+            output.append(record+byte_count+address+code+sum)
+
+            plc = uint16((plc + (len(code)//2)) & uint16(-1))
+            remaining = remaining[(2*bytes_per_line):]
+        if remaining != '':
+            error = True
+            break
+
+    last_line = 'S9030000FC'
+    output.append(last_line)
+
+    return output if not error else [], error

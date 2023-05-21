@@ -1,4 +1,5 @@
-FIRST COMPILATION
+POST COMPILATION
+FINISHED = True
 ERROR = False
             cantidad = 00000005 = 5
                   tag = 00002000 = 8192
