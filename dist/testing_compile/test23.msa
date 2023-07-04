@@ -1,0 +1,10 @@
+	p68h11
+	ORG	$2000
+	ldaa	#3
+	ldab	#2
+	aba
+	ldab	#1
+	sba
+fin	bra	fin
+
+	END

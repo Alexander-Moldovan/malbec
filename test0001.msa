@@ -1,0 +1,25 @@
+	p68h11
+
+CANT	EQU	10
+
+	ORG	$2000
+	ldx	#start
+	ldab	#CANT-2
+	ldaa	#1
+	staa	start
+	staa	start+1
+
+loop	EQU	*
+	ldaa	0,x
+	adda	1,x
+	staa	2,x
+	decb
+	bne	loop	
+
+fin	bra	fin
+
+start	EQU	*
+    	RMB	CANT
+    
+	END
+,

@@ -357,18 +357,21 @@ def processed_lines_to_blocks_of_data(compiled : list[ProcessedLine]) -> list[li
     return data if not error else [], error
 
 def checksum(string: str) -> str:
-    sum = uint8(0)
+    sum = 0
     for i in range(len(string) // 2):
         byte = string[2*i:2*(i+1)]
-        sum += uint8(int(byte,16))
+        sum += int(byte,16)
     
-    return f'{uint8(sum ^ uint8(-1)):02X}'[-2:]
+    return f'{uint8(uint8(sum) ^ uint8(-1)):02X}'[-2:]
 
-def blocks_of_data_to_s19(data: list[list[uint16,str]], filename = '', bytes_per_line = 32) -> list[list[str],bool]:
+def blocks_of_data_to_s19(data: list[list[uint16,str]], filename = '', bytes_per_line = 16) -> list[list[str],bool]:
     error = False
     output = []
 
-    header = f'{filename} by Malbec'[0:32]
+    # TODO: bytes_per_line max 32
+
+    #header = f'{filename} by Malbec'[0:32]
+    header = f'{filename}'[0:32]
     first_line = 'S0'
     first_line += f'{len(header)+3 :02X}'[-2:]
     first_line += '0000'
@@ -379,14 +382,14 @@ def blocks_of_data_to_s19(data: list[list[uint16,str]], filename = '', bytes_per
 
     for block in data:
         plc = uint16(block[0])
-        remaining = ''.joint(block[1])
+        remaining = ''.join(block[1])
         if remaining == '':
             continue
-        for line in range(ceil(len(remaining)/ bytes_per_line)):
+        for line in range(int(ceil((len(remaining)//2)/ bytes_per_line))): # TODO: check 'paridad'
             record = 'S1'
             address = f'{plc:04X}'[-4:]
             code = remaining[:(2*bytes_per_line)]
-            byte_count = f'{(len(code)//2)+3}'[-2:]
+            byte_count = f'{(len(code)//2)+3 :02X}'[-2:]
             sum = checksum(byte_count+address+code)
 
             output.append(record+byte_count+address+code+sum)

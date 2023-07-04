@@ -1,3 +1,6 @@
+pyinstaller --onefile testing_compile.py
+
+
 x.msa : codigo fuente
 x.mbc : archivo "binario" (ensamblado, no linkeditado)
 x.s19 : archivo ejecutable (ensamblado, linkeditado)
