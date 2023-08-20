@@ -1,5 +1,4 @@
-pyinstaller --onefile testing_compile.py
-
+pyinstaller --onefile --icon=icon.ico malbec.py
 
 x.msa : codigo fuente
 x.mbc : archivo "binario" (ensamblado, no linkeditado)

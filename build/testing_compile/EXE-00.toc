@@ -3,7 +3,7 @@
  True,
  False,
  False,
- 'C:\\Python310\\lib\\site-packages\\PyInstaller\\bootloader\\images\\icon-console.ico',
+ ['C:\\Users\\alero\\Desktop\\ITBA\\2023 1C\\introcom\\malbec\\icon.ico'],
  None,
  False,
  False,
@@ -263,7 +263,7 @@
  [],
  False,
  False,
- 1688499791,
+ 1688594949,
  [('run.exe',
    'C:\\Python310\\lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',
    'EXECUTABLE')])
