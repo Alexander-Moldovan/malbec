@@ -1,0 +1,10 @@
+	p68h11
+
+	ORG	$2000
+	ldaa	#3
+	ldab	#4
+	aba
+	staa	$3000
+fin	bra	fin
+
+	END

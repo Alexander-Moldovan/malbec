@@ -1,0 +1,9 @@
+	p68h11
+
+	ORG	$2000
+	tpa
+	oraa	#$2F
+	tap
+fin	bra	fin
+
+	END
