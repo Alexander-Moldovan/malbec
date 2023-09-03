@@ -1,5 +1,13 @@
 pyinstaller --onefile --icon=icon.ico malbec.py
 
+
+/////////////////////////////////////////
+Installing collected packages: numpy
+  WARNING: The scripts f2py, f2py3 and f2py3.10 are installed in '/home/malbecuser/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+/////////////////////////////////////////
+
+
 x.msa : codigo fuente
 x.mbc : archivo "binario" (ensamblado, no linkeditado)
 x.s19 : archivo ejecutable (ensamblado, linkeditado)
