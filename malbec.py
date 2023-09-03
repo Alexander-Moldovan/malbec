@@ -13,24 +13,30 @@ else:
     input_file_name = sys.argv[1]
 
 tf = TextFile(input_file_name)
-with open(input_file_name[:-4]+'.s19','w') as out:
-    precompiled = precompile(tf)
-    varlist,error = compile(precompiled)
-    if not error:
-        finished,error = postcompile(precompiled,varlist,10)
-        if finished and not error:
-            data, error = processed_lines_to_blocks_of_data(precompiled)
+
+precompiled = precompile(tf)
+varlist,error = compile(precompiled)
+if not error:
+    finished,error = postcompile(precompiled,varlist,10)
+    if finished and not error:
+        data, error = processed_lines_to_blocks_of_data(precompiled)
+        if not error:
+            s19_file,error = blocks_of_data_to_s19(data, input_file_name[:-4])
             if not error:
-                s19_file,error = blocks_of_data_to_s19(data, input_file_name[:-4])
-                if not error:
+                with open(input_file_name[:-4]+'.s19','w') as out:
                     for line in s19_file:
                         out.write(line+'\n')
-                else:
-                    print('ERROR: counldn\'t compile ;.;')
+                with open(input_file_name[:-4]+'.rst','w') as list_file:
+                    for processedline in precompiled:
+                        address = '    ' if processedline.address == None  else f'{processedline.address:04X}'
+                        list_file.write(f'{address}    {processedline.code}'.ljust(16)+' | '+f'{processedline.source_line_number}'.rjust(4)+'    '+f'{processedline.source_line}')
+                    list_file.write('\n')
 
             else:
-                print('ERROR: counldn\'t compile T.T')
+                print('ERROR: counldn\'t compile ;.;')
         else:
-            print('ERROR: couldn\'t compile >:(')
+            print('ERROR: counldn\'t compile T.T')
     else:
-        print('ERROR: couldn\'t compile :(')
+        print('ERROR: couldn\'t compile >:(')
+else:
+    print('ERROR: couldn\'t compile :(')
