@@ -1,5 +1,9 @@
 pyinstaller --onefile --icon=icon.ico malbec.py
 
+TODO:
+- Agregar correccion "B,Q,H"
+
+
 
 /////////////////////////////////////////
 Installing collected packages: numpy

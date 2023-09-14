@@ -16,7 +16,7 @@ class TextFile(object):
     def open_read_only_file(self,filename : str) -> bool:
         self.close_file()
         try:
-            self.file = open(filename, "r")
+            self.file = open(filename, "r")#,encoding="utf-8")
             self.state = _FILE_OPENED
             self.name = filename
         except:

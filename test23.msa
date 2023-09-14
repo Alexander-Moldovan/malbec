@@ -5,6 +5,6 @@
 	aba
 	ldab	#1
 	sba
-fin	bra	fin
+fin	bra	fin	
 
 	END

@@ -56,25 +56,25 @@ def evaluate_expression(tokens : list[str,CompilerOperator], plc: int, variable_
                 for c in string:
                     variable = ((variable<<8) + (ord(c) & 0xff)) & 0xffffffff
             elif token[0].isnumeric():
-                if   token[-2:].upper() == '.H':
+                if   token[-1:].upper() == 'H':
                     try:
-                        variable = int(token[:-2],16)
+                        variable = int(token[:-1],16)
                     except:
                         print(f'ERROR: invalid token: {token}')
                         error = True
                         evaluated = False
                         break                        
-                elif token[-2:].upper() == '.B':
+                elif token[-1:].upper() == 'B':
                     try:
-                        variable = int(token[:-2],2)
+                        variable = int(token[:-1],2)
                     except:
                         print(f'ERROR: invalid token: {token}')
                         error = True
                         evaluated = False
                         break  
-                elif token[-2:].upper() == '.Q':
+                elif token[-1:].upper() == 'Q':
                     try:
-                        variable = int(token[:-2],8)
+                        variable = int(token[:-1],8)
                     except:
                         print(f'ERROR: invalid token: {token}')
                         error = True
