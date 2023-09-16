@@ -13,36 +13,37 @@ def precompile(textfile:TextFile) -> list[ProcessedLine]:
     error = False
 
     for n,line in enumerate(textfile.get_all_lines()):
-        if type(line) != str or len(line) == 0:
+        if type(line) != str:
             continue
-        if line[0] == '*':
-            continue
-        split_line = line.split()
-        precompiled_line = ProcessedLine(n+1,line)#[0,None,None,None,None]
-        if not line[0].isspace() and split_line: # starts with label
-            precompiled_line.set_label(split_line.pop(0))
-        if split_line:
-            inst = split_line.pop(0).upper()
-            precompiled_line.set_instruction(inst)
-            if not (inst in DIRECTIVE_SET) and not (inst in INSTRUCTION_SET):
-                error = True
-                print(f'ERROR: Unknown instruction or directive {inst} in line {n+1}')
-                break
-            elif (inst in DIRECTIVE_SET and DIRECTIVE_SET[inst].expects_operands()) or \
-                (inst in INSTRUCTION_SET and INSTRUCTION_SET[inst].expects_operands()):
-                if split_line:
-                    relative_operand = False
-                    if inst in INSTRUCTION_SET:
-                        relative_operand = INSTRUCTION_SET[inst].is_relative()
-                    precompiled_line.set_operand(split_line.pop(0),relative_operand)
-
-                else:
+        if len(line) == 0 or line[0] == '*':
+            precompiled_line = ProcessedLine(n+1,line)
+        else:
+            split_line = line.split()
+            precompiled_line = ProcessedLine(n+1,line)#[0,None,None,None,None]
+            if not line[0].isspace() and split_line: # starts with label
+                precompiled_line.set_label(split_line.pop(0))
+            if split_line:
+                inst = split_line.pop(0).upper()
+                precompiled_line.set_instruction(inst)
+                if not (inst in DIRECTIVE_SET) and not (inst in INSTRUCTION_SET):
                     error = True
-                    print(f'ERROR: Instruction {inst} in line {n+1} expected an operand')
+                    print(f'ERROR: Unknown instruction or directive {inst} in line {n+1}')
                     break
+                elif (inst in DIRECTIVE_SET and DIRECTIVE_SET[inst].expects_operands()) or \
+                    (inst in INSTRUCTION_SET and INSTRUCTION_SET[inst].expects_operands()):
+                    if split_line:
+                        relative_operand = False
+                        if inst in INSTRUCTION_SET:
+                            relative_operand = INSTRUCTION_SET[inst].is_relative()
+                        precompiled_line.set_operand(split_line.pop(0),relative_operand)
 
-        if precompiled_line.has_content():
-            precompiled.append(precompiled_line)
+                    else:
+                        error = True
+                        print(f'ERROR: Instruction {inst} in line {n+1} expected an operand')
+                        break
+
+        #if precompiled_line.has_content():
+        precompiled.append(precompiled_line)
     if error:
         return []
     else:
@@ -59,11 +60,13 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
     #precompiled = [processed_line for processed_line in precompiled if processed_line.instruction != None]
 
     # TODO: hacer una funcion q haga esto en lugar de utilizar esta tecnica
-    for processed_line in reversed(precompiled):
-        if processed_line.instruction == None and processed_line.label == None:
-            precompiled.remove(processed_line)
+    #for processed_line in reversed(precompiled):
+    #    if processed_line.instruction == None and processed_line.label == None:
+    #        precompiled.remove(processed_line)
 
     for processed_line in precompiled:
+        if not processed_line.has_content:
+            continue
         label = processed_line.label
         instruction = processed_line.instruction
         operand = processed_line.operand
@@ -194,6 +197,8 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
         offset_from_org = int32(0)
         finished = True
         for processed_line in compiled:
+            if not processed_line.has_content:
+                continue
             label = processed_line.label
             instruction = processed_line.instruction
             operand = processed_line.operand
@@ -318,6 +323,8 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
 def check_evaluation(compiled : list[ProcessedLine]) -> bool:
     evaluated = True
     for processed_line in compiled:
+        if not processed_line.has_content:
+            continue
         if processed_line.operand.needs_evaluation():
             evaluated = False
             break
@@ -338,6 +345,8 @@ def processed_lines_to_blocks_of_data(compiled : list[ProcessedLine]) -> list[li
         current_string = [uint16(0),[]]
         data.append(current_string)
         for processed_line in compiled:
+            if not processed_line.has_content:
+                continue
             instruction = processed_line.instruction
             code = processed_line.code
             operand = processed_line.operand

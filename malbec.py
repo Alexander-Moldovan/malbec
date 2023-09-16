@@ -29,7 +29,7 @@ if not error:
                 with open(input_file_name[:-4]+'.rst','w') as list_file:
                     for processedline in precompiled:
                         address = '    ' if processedline.address == None  else f'{processedline.address:04X}'
-                        list_file.write(f'{address}    {processedline.code}'.ljust(16)+' | '+f'{processedline.source_line_number}'.rjust(4)+'    '+f'{processedline.source_line}')
+                        list_file.write(f'{address}    {processedline.code}'.ljust(16)+' | '+f'{processedline.source_line_number}'.rjust(4)+'    '+(f'{processedline.source_line}').expandtabs(8))
                     list_file.write('\n')
 
             else:

@@ -15,7 +15,7 @@ class ProcessedLine(object):
         self.set_operand(operand,relative_operand)
 
     def has_content(self):
-        return (self.label != None or self.instruction != None or self.operand != None)
+        return (self.label != None or self.instruction != None)# or self.operand != None)
 
     def set_label(self,label:str):
         self.label = label
