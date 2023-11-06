@@ -28,8 +28,24 @@ if not error:
                         out.write(line+'\n')
                 with open(input_file_name[:-4]+'.rst','w') as list_file:
                     for processedline in precompiled:
-                        address = '    ' if processedline.address == None  else f'{processedline.address:04X}'
-                        list_file.write(f'{address}    {processedline.code}'.ljust(16)+' | '+f'{processedline.source_line_number}'.rjust(4)+'    '+(f'{processedline.source_line}').expandtabs(8))
+                        #if(processedline.instruction == 'RMB')
+                        if len(processedline.code) > 2*4:
+                            pass # ASUMO QUE EXISTE UN ADDRESS DISTINTO DE NONE, DE LO CONTRARIO, NO TENDRIA SENTIDO QUE HAYA CODE
+                            # TODO: corroborarlo!!!
+                            address_int = processedline.address
+                            address_str = f'{address_int:04X}'
+                            code_remaining = processedline.code
+                            list_file.write(f'{address_str}    {code_remaining[:8]}'.ljust(16)+' | '+f'{processedline.source_line_number}'.rjust(4)+'    '+(f'{processedline.source_line}').expandtabs(8))
+                            code_remaining = code_remaining[8:]
+                            while code_remaining:
+                                address_int += 4
+                                address_str = f'{address_int:04X}'
+                                list_file.write(f'{address_str}    {code_remaining[:8]}'.ljust(16)+' | \n')
+                                code_remaining = code_remaining[8:]
+
+                        else:
+                            address = '    ' if processedline.address == None  else f'{processedline.address:04X}'
+                            list_file.write(f'{address}    {processedline.code}'.ljust(16)+' | '+f'{processedline.source_line_number}'.rjust(4)+'    '+(f'{processedline.source_line}').expandtabs(8))
                     list_file.write('\n')
 
             else:

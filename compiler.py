@@ -65,7 +65,7 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
     #        precompiled.remove(processed_line)
 
     for processed_line in precompiled:
-        if not processed_line.has_content:
+        if not processed_line.has_content():
             continue
         label = processed_line.label
         instruction = processed_line.instruction
@@ -81,7 +81,12 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
                 break
             
             processed_line.code = ''
-            processed_line.address = None if (last_org == None or not directive.generates_code) else last_org + offset_from_org
+            # !!!
+            if last_org == None or ((not directive.generates_code) and (instruction != 'RMB')):
+                processed_line.address = None
+            else:
+                processed_line.address = last_org + offset_from_org
+            
 
             if directive.operand_type == OPERAND_IS_ARRAY_OF_REGULAR:
                 check_function = operand.operand_is_array_of_regular
@@ -197,7 +202,7 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
         offset_from_org = int32(0)
         finished = True
         for processed_line in compiled:
-            if not processed_line.has_content:
+            if not processed_line.has_content():
                 continue
             label = processed_line.label
             instruction = processed_line.instruction
@@ -212,7 +217,8 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
             if instruction in DIRECTIVE_SET:
                 directive = DIRECTIVE_SET[instruction]
 
-                if directive.generates_code and processed_line.address == None and last_org != None:
+                # !!!
+                if (directive.generates_code or (directive == DIRECTIVE_SET['RMB'])) and processed_line.address == None and last_org != None:
                     processed_line.address = last_org + offset_from_org
 
                 if directive.operand_type == OPERAND_IS_ARRAY_OF_REGULAR:
@@ -224,6 +230,7 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
                 else:
                     continue   # p68h11 or END
 
+# TODO: Que last_org solo pueda ser None o int32
                 if operand.needs_evaluation():
                     if directive == DIRECTIVE_SET['FCC']:
                         error = True
@@ -323,7 +330,7 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
 def check_evaluation(compiled : list[ProcessedLine]) -> bool:
     evaluated = True
     for processed_line in compiled:
-        if not processed_line.has_content:
+        if not processed_line.has_content():
             continue
         if processed_line.operand.needs_evaluation():
             evaluated = False
@@ -345,7 +352,7 @@ def processed_lines_to_blocks_of_data(compiled : list[ProcessedLine]) -> list[li
         current_string = [uint16(0),[]]
         data.append(current_string)
         for processed_line in compiled:
-            if not processed_line.has_content:
+            if not processed_line.has_content():
                 continue
             instruction = processed_line.instruction
             code = processed_line.code
