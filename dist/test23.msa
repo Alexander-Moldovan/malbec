@@ -1,7 +1,7 @@
 	p68h11
 	ORG	$2000
 	ldaa	#3
-	ldaa	#2a
+	ldaa	#2
 	aba
 	ldab	#1
 	sba

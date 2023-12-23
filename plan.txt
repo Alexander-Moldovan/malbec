@@ -6,7 +6,7 @@ TODO:
 [ ] Add "compilation succesful, number of lines compiled" o algo asi al final
 [ ] Add more details to "invalid operand" error? Or make it similar to the rest
 [ ] Fix division by 0 message
-[ ] Reemplazar uso de get_lines por uso de campo text original de processedlines
+[X] Reemplazar uso de get_lines por uso de campo text original de processedlines
 
 /////////////////////////////////////////
 Installing collected packages: numpy
