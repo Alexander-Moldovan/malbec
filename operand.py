@@ -37,6 +37,13 @@ class Operand(object): # Made of expressions, separated by commas
         #     self.expressions[0] = Expression(expr_str)
         #     print(f'New expr is {expr_str}' )
 
+    def error(self):
+        for expression in self.expressions:
+            if expression.error:
+                return True
+        return False
+
+
     def needs_evaluation(self):
         answer = False
         for expression in self.expressions:

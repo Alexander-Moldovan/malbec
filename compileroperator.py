@@ -77,6 +77,8 @@ def _fn_mul(a : int32, b : int32) -> list[int32,bool]:
     c = int32(a*b)
     return c,c.is_integer()
 def _fn_div(a : int32, b : int32) -> list[int32,bool]:
+    if b == 0:
+        return float('Nan'),False
     c = int32(a/b)
     return c,c.is_integer()
 def _fn_mod(a : int32, b : int32) -> list[int32,bool]:

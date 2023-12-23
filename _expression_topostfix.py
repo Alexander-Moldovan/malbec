@@ -1,7 +1,7 @@
 from compileroperator import is_binary_operator,is_unary_operator,is_variable,get_binary_operator,get_unary_operator
 from compileroperator import CompilerOperator
 
-def infix_to_postfix(tokens : list[str]) -> list[str, CompilerOperator]:
+def infix_to_postfix(tokens : list[str]) -> list[list[str, CompilerOperator],bool]: # bool = error
     postfix = []
     stack = []
     expects_variable = True
@@ -55,5 +55,5 @@ def infix_to_postfix(tokens : list[str]) -> list[str, CompilerOperator]:
             error = True
             break
 
-    return postfix if not error else []
+    return [postfix if not error else [],error]
 

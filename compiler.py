@@ -8,7 +8,7 @@ from numpy import ceil
 from addressingmodes import *
 
 
-def precompile(textfile:TextFile) -> list[ProcessedLine]:
+def precompile(textfile:TextFile) -> list[list[ProcessedLine],bool]:
     precompiled = []
     error = False
 
@@ -27,7 +27,8 @@ def precompile(textfile:TextFile) -> list[ProcessedLine]:
                 precompiled_line.set_instruction(inst)
                 if not (inst in DIRECTIVE_SET) and not (inst in INSTRUCTION_SET):
                     error = True
-                    print(f'ERROR: Unknown instruction or directive {inst} in line {n+1}')
+                    print(f'ERROR IN LINE {n+1}: Unknown instruction or directive {inst}')
+                    print(line)
                     break
                 elif (inst in DIRECTIVE_SET and DIRECTIVE_SET[inst].expects_operands()) or \
                     (inst in INSTRUCTION_SET and INSTRUCTION_SET[inst].expects_operands()):
@@ -36,18 +37,24 @@ def precompile(textfile:TextFile) -> list[ProcessedLine]:
                         if inst in INSTRUCTION_SET:
                             relative_operand = INSTRUCTION_SET[inst].is_relative()
                         precompiled_line.set_operand(split_line.pop(0),relative_operand)
+                        if precompiled_line.operand.error():
+                            error = True
+                            print(f'ERROR IN LINE {n+1}: invalid operand')
+                            print(line)
+                            break                            
 
                     else:
                         error = True
-                        print(f'ERROR: Instruction {inst} in line {n+1} expected an operand')
+                        print(f'ERROR IN LINE {n+1}: Instruction {inst} expected an operand')
+                        print(line)
                         break
 
         #if precompiled_line.has_content():
         precompiled.append(precompiled_line)
     if error:
-        return []
+        return [[],error]
     else:
-        return precompiled
+        return [precompiled,error]
 
 # TODO: agregar "linea" para señalar en q linea se genero el error
 def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
@@ -78,6 +85,8 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
             directive = DIRECTIVE_SET[instruction]
             if directive.label_required and label == None:
                 error = True
+                print(f'ERROR IN LINE {processed_line.source_line_number}: Directive {instruction} requires a label')
+                print(processed_line.source_line)
                 break
             
             processed_line.code = ''
@@ -102,16 +111,22 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
 
             error = not check_function()
             if error:
+                print(f'ERROR IN LINE {processed_line.source_line_number}: Invalid operand for directive {instruction}')
+                print(processed_line.source_line)
                 break
 
             evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
             if error:
+                print(f'ERROR IN LINE {processed_line.source_line_number}: Operand can\'t be evaluated')
+                print(processed_line.source_line)
                 break
 
             if evaluated:
                 ops,evaluated,error = get_function([directive.operand_min,directive.operand_max,directive.operand_size_in_bytes])
                 if not evaluated or error:
                     error = True
+                    print(f'ERROR IN LINE {processed_line.source_line_number}: Operand can\'t be evaluated')
+                    print(processed_line.source_line)
                     break
                 if directive.generates_code:
                     processed_line.code += ops
@@ -129,6 +144,8 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
                     processed_line.code += 'XX'*(operand.get_ammount_of_expressions()*directive.operand_size_in_bytes)
                 elif directive == DIRECTIVE_SET['FCC']:
                     error = True
+                    print(f'ERROR IN LINE {processed_line.source_line_number}: Directive {instruction} requires operand to be evaluable in the first pass')
+                    print(processed_line.source_line)
                     break
 
             if directive.reset_offset:
@@ -151,6 +168,8 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
                     break
             if not found_addmode:
                 error = True
+                print(f'ERROR IN LINE {processed_line.source_line_number}: Invalid operand for instruction {instruction}')
+                print(processed_line.source_line)
                 break
             processed_line.address = None if last_org == None else last_org + offset_from_org
 
@@ -159,7 +178,10 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
             processed_line.code = opcode
             
             evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
-            if error: break
+            if error: 
+                print(f'ERROR IN LINE {processed_line.source_line_number}: Operand can\'t be evaluated')
+                print(processed_line.source_line)
+                break
             if evaluated:
                 if addmode == EXT and DIR in inst.opcodes and operand.is_value_direct():
                     addmode = DIR
@@ -170,6 +192,8 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
                 ops,evaluated,error = operand.get_operands(addmode)
                 if not evaluated or error:
                     error = True
+                    print(f'ERROR IN LINE {processed_line.source_line_number}: Operand can\'t be evaluated')
+                    print(processed_line.source_line)
                     break
                 processed_line.code += ops
                 # hacer algo con el dato
@@ -182,12 +206,13 @@ def compile(precompiled : list[ProcessedLine]) -> list[dict[str,int32],bool]:
         elif instruction == None:
             pass # TODO : hacer algo con esto (eliminar linea ?)
         else:
-            print(f'ERROR: invalid instruction {instruction}')
             error = True
+            print(f'ERROR IN LINE {processed_line.source_line_number}: invalid instruction {instruction}')
+            print(processed_line.source_line)
             break
     
     if error:
-        print('ERROR IN COMPILE-TIME')
+        print('[ERROR IN COMPILE-TIME]')
 
     return variable_list if not error else {}, error
 
@@ -234,13 +259,20 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
                 if operand.needs_evaluation():
                     if directive == DIRECTIVE_SET['FCC']:
                         error = True
+                        print(f'ERROR IN LINE {processed_line.source_line_number}: Directive {instruction} requires operand to be evaluable in the first pass')
+                        print(processed_line.source_line)
                         break
                     evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
-                    if error: break
+                    if error:
+                        print(f'ERROR IN LINE {processed_line.source_line_number}: Operand can\'t be evaluated')
+                        print(processed_line.source_line)                        
+                        break
                     if evaluated:
                         ops,evaluated,error = get_function([directive.operand_min,directive.operand_max,directive.operand_size_in_bytes])
                         if not evaluated or error:
                             error = True
+                            print(f'ERROR IN LINE {processed_line.source_line_number}: Operand can\'t be evaluated')
+                            print(processed_line.source_line)
                             break
                         if directive.generates_code:
                             processed_line.code = ops
@@ -270,6 +302,8 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
                         ops,evaluated,error = get_function([directive.operand_min,directive.operand_max,directive.operand_size_in_bytes])
                         if not evaluated or error:
                             error = True
+                            print(f'ERROR IN LINE {processed_line.source_line_number}: Operand can\'t be evaluated')
+                            print(processed_line.source_line)
                             break
                         last_org = ops
                         offset_from_org = int32(0)
@@ -278,6 +312,8 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
                         ops,evaluated,error = get_function([directive.operand_min,directive.operand_max,directive.operand_size_in_bytes])
                         if not evaluated or error:
                             error = True
+                            print(f'ERROR IN LINE {processed_line.source_line_number}: Operand can\'t be evaluated')
+                            print(processed_line.source_line)
                             break
                         if last_org != None:
                             last_org = int32(last_org + offset_from_org + ops)
@@ -298,11 +334,16 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
                     processed_line.address = last_org + offset_from_org
                 if operand.needs_evaluation():
                     evaluated,error = operand.evaluate(None if last_org == None else last_org + offset_from_org, variable_list)
-                    if error: break
+                    if error:
+                        print(f'ERROR IN LINE {processed_line.source_line_number}: Operand can\'t be evaluated')
+                        print(processed_line.source_line)
+                        break
                     if evaluated:
                         ops,evaluated,error = operand.get_operands(processed_line.addmode)
                         if not evaluated or error:
                             error = True
+                            print(f'ERROR IN LINE {processed_line.source_line_number}: Operand can\'t be evaluated')
+                            print(processed_line.source_line)
                             break
                         processed_line.code = processed_line.code[:-len(ops)] + ops
                     else:
@@ -314,8 +355,10 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
                 pass
 
             else:
-                print(f'ERROR: invalid instruction {instruction}')
+                #print(f'ERROR: invalid instruction {instruction}')
                 error = True
+                print(f'ERROR IN LINE {processed_line.source_line_number}: invalid instruction {instruction}')
+                print(processed_line.source_line)
                 break
 
         if error:
@@ -324,6 +367,11 @@ def postcompile(compiled : list[ProcessedLine], variable_list: dict[str,int32], 
             break     
 
     #finished = check_evaluation(compiled) if not error else False
+    if error:
+        print('[ERROR IN \"POSTCOMPILE\"-TIME]')
+    if not finished:
+        #number_of_iterations
+        print(f'[\"POSTCOMPILATION\" NOT FINISHED AFTER {number_of_iterations+1} TOTAL PASSES]')
     return finished, error
 
         
@@ -361,6 +409,8 @@ def processed_lines_to_blocks_of_data(compiled : list[ProcessedLine]) -> list[li
                 ops,evaluated,error = operand.get_operand_single_variable()
                 if not evaluated or error:
                     error = True
+                    print(f'ERROR IN LINE {processed_line.source_line_number}: could not get {instruction} operand')
+                    print(processed_line.source_line)
                     break
                 plc = uint16(ops & uint16(-1)) if instruction == 'ORG' else uint16((plc+ops) & uint16(-1))
                 current_string = [plc,[]]
@@ -369,6 +419,9 @@ def processed_lines_to_blocks_of_data(compiled : list[ProcessedLine]) -> list[li
             plc = uint16((plc + (len(code)//2)) & uint16(-1))
     else:
         error = True
+        print('ERROR: file was not fully compiled before attempting to create Blocks of Data')
+    if error:
+        print('[ERROR WHILE CREATING BLOCKS OF DATA]')
     
     return data if not error else [], error
 
@@ -418,5 +471,8 @@ def blocks_of_data_to_s19(data: list[list[uint16,str]], filename = '', bytes_per
 
     last_line = 'S9030000FC'
     output.append(last_line)
+
+    if error:
+        print('[ERROR WHILE TRANSFORMING BLOCKS OF DATA INTO s19 FILE]')
 
     return output if not error else [], error

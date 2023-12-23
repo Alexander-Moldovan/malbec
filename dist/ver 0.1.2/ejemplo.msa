@@ -1,6 +1,0 @@
-	p68h11
-	ORG	$2000
-	FDB	$20,$FE
-	RMB	10
-
-	END

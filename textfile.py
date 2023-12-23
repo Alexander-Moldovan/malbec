@@ -45,6 +45,14 @@ class TextFile(object):
             return self.file.readlines()
         else:
             return []       
+        
+    def get_line(self,number_of_line:int) -> str: # Number of line starts at 1 !!!
+        self.file.seek(0)
+        lines = self.file.readlines() # TODO: hacerlo de otro modo que consuma menos recursos
+        if len(lines) < number_of_line or number_of_line < 1:
+            return ""
+        else:
+            return lines[number_of_line-1]
     
     def get_next_line(self) -> str:
         if self.state == _FILE_OPENED and self.file != None:

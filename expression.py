@@ -18,9 +18,9 @@ class Expression(object): # Made of tokens (operators, variables, etc)
     def __init__(self, expression = "") -> None:
         self._set_expression(expression)
         if self.is_imm_expression():
-            self.postfix = infix_to_postfix(self.tokens[1:]) # error = (postfix == [])
+            self.postfix,self.error = infix_to_postfix(self.tokens[1:]) # error = (postfix == [])
         else:
-            self.postfix = infix_to_postfix(self.tokens) # error = (postfix == [])
+            self.postfix,self.error = infix_to_postfix(self.tokens) # error = (postfix == [])
         self.evaluated = False
         self.value = int32(0)
 

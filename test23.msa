@@ -3,8 +3,24 @@
 	ldaa	#3
 	ldab	#2
 	aba
-	ldab	#1
+	ldaa	#1
+        ldaa    1,x
+       FCC     12
+*       staa    *esto va a ser interesante*
 	sba
 fin	bra	fin	
+
+*A       EQU     B
+B       EQU     C
+C       EQU     D
+D       EQU     E
+E       EQU     F
+F       EQU     G
+G       EQU     H
+H       EQU     I
+I       EQU     J
+J       EQU     K
+K       EQU     L
+L       EQU     20
 
 	END

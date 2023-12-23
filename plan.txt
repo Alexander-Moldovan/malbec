@@ -1,6 +1,13 @@
 pyinstaller --onefile --icon=icon.ico malbec.py
 
 
+TODO:
+[ ] Check for existing file
+[ ] Add "compilation succesful, number of lines compiled" o algo asi al final
+[ ] Add more details to "invalid operand" error? Or make it similar to the rest
+[ ] Fix division by 0 message
+[ ] Reemplazar uso de get_lines por uso de campo text original de processedlines
+
 /////////////////////////////////////////
 Installing collected packages: numpy
   WARNING: The scripts f2py, f2py3 and f2py3.10 are installed in '/home/malbecuser/.local/bin' which is not on PATH.
