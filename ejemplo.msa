@@ -10,4 +10,8 @@ fin	bra	fin
 	RMB 16
 a	bra	a
 
+	FCC 'Hola a todos'
+	FCB 'a','b',' ','a'
+	FDB 'a','b',' ','a'
+
 	END

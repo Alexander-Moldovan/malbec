@@ -7,6 +7,8 @@ from numpy import ceil
 
 from addressingmodes import *
 
+UNUSED_CHARACTER_IN_STRINGS = chr(256) #'Ā'
+
 
 def precompile(textfile:TextFile) -> list[list[ProcessedLine],bool]:
     precompiled = []
@@ -18,7 +20,20 @@ def precompile(textfile:TextFile) -> list[list[ProcessedLine],bool]:
         if len(line) == 0 or line[0] == '*':
             precompiled_line = ProcessedLine(n+1,line)
         else:
-            split_line = line.split()
+            
+            inside_string = False
+            edited_line = line
+            for i in range(len(edited_line)):
+                if edited_line[i] == ' ' and inside_string:
+                    edited_line = edited_line[:i] + UNUSED_CHARACTER_IN_STRINGS + edited_line[i+1:]
+                if edited_line[i] == '\'':
+                    inside_string = not inside_string
+
+            split_line = edited_line.split()
+            for i in range(len(split_line)):
+                split_line[i] = split_line[i].replace(UNUSED_CHARACTER_IN_STRINGS,' ')
+
+
             precompiled_line = ProcessedLine(n+1,line)#[0,None,None,None,None]
             if not line[0].isspace() and split_line: # starts with label
                 precompiled_line.set_label(split_line.pop(0))
