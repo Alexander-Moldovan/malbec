@@ -427,11 +427,11 @@ def processed_lines_to_blocks_of_data(compiled : list[ProcessedLine]) -> list[li
                     print(f'ERROR IN LINE {processed_line.source_line_number}: could not get {instruction} operand')
                     print(processed_line.source_line)
                     break
-                plc = uint16(ops & uint16(-1)) if instruction == 'ORG' else uint16((plc+ops) & uint16(-1))
+                plc = uint16(ops & uint16(0xffff)) if instruction == 'ORG' else uint16((plc+ops) & uint16(0xffff))
                 current_string = [plc,[]]
                 data.append(current_string)
             current_string[1].append(code)
-            plc = uint16((plc + (len(code)//2)) & uint16(-1))
+            plc = uint16((plc + (len(code)//2)) & uint16(0xffff))
     else:
         error = True
         print('ERROR: file was not fully compiled before attempting to create Blocks of Data')
@@ -446,7 +446,7 @@ def checksum(string: str) -> str:
         byte = string[2*i:2*(i+1)]
         sum += int(byte,16)
     
-    return f'{uint8(uint8(sum) ^ uint8(-1)):02X}'[-2:]
+    return f'{uint8(uint8(sum & 0xff) ^ uint8(-1 & 0xff)):02X}'[-2:]
 
 def blocks_of_data_to_s19(data: list[list[uint16,str]], filename = '', bytes_per_line = 16) -> list[list[str],bool]:
     error = False
@@ -465,7 +465,7 @@ def blocks_of_data_to_s19(data: list[list[uint16,str]], filename = '', bytes_per
     output.append(first_line)
 
     for block in data:
-        plc = uint16(block[0])
+        plc = uint16(block[0] & 0xffff)
         remaining = ''.join(block[1])
         if remaining == '':
             continue
@@ -478,7 +478,7 @@ def blocks_of_data_to_s19(data: list[list[uint16,str]], filename = '', bytes_per
 
             output.append(record+byte_count+address+code+sum)
 
-            plc = uint16((plc + (len(code)//2)) & uint16(-1))
+            plc = uint16((plc + (len(code)//2)) & uint16(0xffff))
             remaining = remaining[(2*bytes_per_line):]
         if remaining != '':
             error = True
